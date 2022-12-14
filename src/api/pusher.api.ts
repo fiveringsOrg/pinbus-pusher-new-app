@@ -40,7 +40,7 @@ export function getPowerbankDeployStatus(deviceCode: any) {
   );
 }
 
-export function recycleCabinet(deviceCode: any, reason: any, playFalg: any) {
+export function recycleCabinet(deviceCode: any, reason: any, playFlag: any) {
   return axios.post(
     API_URL + `/recycleCabinet`,
     {},
@@ -48,7 +48,7 @@ export function recycleCabinet(deviceCode: any, reason: any, playFalg: any) {
       params: {
         deviceCode: deviceCode,
         reason: reason,
-        playFalg: playFalg,
+        playFalg: playFlag,
       },
     }
   );

@@ -1,0 +1,47 @@
+{
+  "common": {
+    "success": "",
+    "error": "",
+    "warning": ""
+  },
+  "login": {
+    "username": "Username",
+    "password": "Password",
+    "username-message": "Please input your Username!",
+    "password-message": "Please input your Password!",
+    "remember-me": "Remember me",
+    "login-button": "Login",
+    "success": "Login success!",
+    "error": "Login error!",
+    "warning": "Login warning!"
+  },
+  "operate": {
+    "deploy-cabinet": "Deploy the cabinet",
+    "recycle-cabinet": "Recycle the cabinet",
+    "recycle-powerbank": "Recycle the powerbank"
+  },
+  "deploy-cabinet": {
+    "title": "Deploy the cabinet",
+    "merchant": "Merchant",
+    "cabinet": "Cabinet",
+    "merchant-message": "Please choose your Merchant!",
+    "cabinet-message": "Please scan qrcode Cabinet!",
+    "merchant-search": "Search and choose merchant",
+    "submit-button": "Deploy",
+    "success": "Deploy cabinet success!",
+    "warning": "Deploy cabinet have some isssue!",
+    "validate": "Please update information"
+  },
+  "recycle-cabinet": {
+    "title": "Recycle the cabinet",
+    "cabinet": "Cabinet",
+    "reason": "Reason",
+    "reject-powerbank": "Reject powerbank",
+    "cabinet-message": "Please scan qrcode Cabinet!",
+    "reason-message": "Please choose reason!",
+    "reject-powerbank-message": "Please choose reject powerbank!",
+    "submit-button": "Recycle",
+    "success": "Recycle cabinet success!",
+    "warning": "Recycle cabinet have some isssue!"
+  }
+}

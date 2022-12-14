@@ -1,0 +1,47 @@
+{
+  "common": {
+    "success": "",
+    "error": "",
+    "warning": ""
+  },
+  "login": {
+    "username": "Tên người dùng",
+    "password": "Mật khẩu",
+    "username-message": "Vui lòng nhập tên người dùng của bạn!",
+    "password-message": "Vui lòng nhập Mật khẩu của bạn!",
+    "remember-me": "Nhớ tôi",
+    "login-button": "Đăng nhập",
+    "success": "Đăng nhập thành công!",
+    "error": "Lỗi đăng nhập!",
+    "warning": "Cảnh báo đăng nhập!"
+  },
+  "operate": {
+    "deploy-cabinet": "Triển khai cabinet",
+    "recycle-cabinet": "Thu hồi cabinet",
+    "recycle-powerbank": "Thu hồi pin sạc"
+  },
+  "deploy-cabinet": {
+    "title": "Triển khai cabinet",
+    "merchant": "Merchant",
+    "cabinet": "Cabinet",
+    "merchant-message": "Vui lòng chọn merchant của bạn!",
+    "cabin-message": "Vui lòng quét qrcode Cabinet!",
+    "merchant-search": "Tìm kiếm và chọn merchant",
+    "submit-button": "Triển khai",
+    "success": "Triển khai cabinet thành công!",
+    "warning": "Triển khai cabinet gặp vấn đề!",
+    "validate": "Vui lòng đầy đủ thông tin"
+  },
+  "recycle-cabinet": {
+    "title": "Thu hồi cabinet",
+    "cabinet": "Cabinet",
+    "reason": "lý do",
+    "reject-powerbank": "Bật pin sạc khi thu hồi",
+    "cabin-message": "Vui lòng quét qrcode Cabinet!",
+    "reason-message": "Vui lòng chọn lý do thu hồi!",
+    "reject-powerbank-message": "Vui lòng chọn loại powerbank!",
+    "submit-button": "Thu hồi",
+    "success": "Thu hồi cabinet thành công!",
+    "warning": "Thu hồi cabinet gặp vấn đề!"
+  }
+}
