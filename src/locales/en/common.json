@@ -5,6 +5,7 @@
     "warning": ""
   },
   "login": {
+    "title": "Pusher login",
     "username": "Username",
     "password": "Password",
     "username-message": "Please input your Username!",
@@ -16,6 +17,7 @@
     "warning": "Login warning!"
   },
   "operate": {
+    "title": "Pusher operate",
     "deploy-cabinet": "Deploy the cabinet",
     "recycle-cabinet": "Recycle the cabinet",
     "recycle-powerbank": "Recycle the powerbank"
@@ -30,7 +32,8 @@
     "submit-button": "Deploy",
     "success": "Deploy cabinet success!",
     "warning": "Deploy cabinet have some isssue!",
-    "validate": "Please update information"
+    "validate": "Please update information",
+    "continue-deploy": "Continue deploy"
   },
   "recycle-cabinet": {
     "title": "Recycle the cabinet",
@@ -40,8 +43,14 @@
     "cabinet-message": "Please scan qrcode Cabinet!",
     "reason-message": "Please choose reason!",
     "reject-powerbank-message": "Please choose reject powerbank!",
+    "validate": "Please update information",
     "submit-button": "Recycle",
     "success": "Recycle cabinet success!",
-    "warning": "Recycle cabinet have some isssue!"
+    "warning": "Recycle cabinet have some isssue!",
+    "continue-recycle": "Continue recycle cabinet",
+    "true": "Yes",
+    "false": "No",
+    "adjust": "Adjust",
+    "fault": "Fault"
   }
 }

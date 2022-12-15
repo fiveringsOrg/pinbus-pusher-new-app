@@ -17,6 +17,11 @@ import { saveToken, getToken, saveUser } from "../utils/storage.util";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import Title from "antd/es/typography/Title";
+import {
+  messageError,
+  messageSuccess,
+  messageWarning,
+} from "../utils/notice.util";
 
 export const Login: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "login" });
@@ -28,10 +33,6 @@ export const Login: FC = () => {
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
-
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
-  };
 
   const clearCaches = () => {
     setUsername("");
@@ -46,7 +47,7 @@ export const Login: FC = () => {
         .then((response) => {
           if (response && response.data.status === "NORMAL") {
             saveToken(response.data.result);
-            success("");
+            messageSuccess("");
             axios.defaults.headers.common["Authorization"] =
               response.data.result;
             getUser().then((user) => {
@@ -59,43 +60,26 @@ export const Login: FC = () => {
               clearCaches();
             }, 1000);
           } else if (response && response.data.status === "ERROR") {
-            error(response.data.message);
+            messageError(response.data.message);
             clearCaches();
           } else {
-            warning("");
+            messageWarning("");
             clearCaches();
           }
         })
         .catch((e) => {
-          error(e);
+          messageError(e);
           clearCaches();
         });
     } else {
       clearCaches();
-      warning("");
+      messageWarning("");
     }
   };
 
-  const success = (content: string) => {
-    message.open({
-      type: "success",
-      content: content ? content : t("success"),
-    });
-  };
-
-  const error = (content: string) => {
-    message.open({
-      type: "error",
-      content: content ? content : t("error"),
-    });
-  };
-
-  const warning = (content: string) => {
-    message.open({
-      type: "warning",
-      content: content ? content : t("warning"),
-    });
-  };
+  React.useEffect(() => {
+    document.title = t("title");
+  }, [t]);
 
   return (
     <div>
@@ -144,7 +128,6 @@ export const Login: FC = () => {
             labelCol={{ span: 2 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: true }}
-            onFinish={onFinish}
           >
             <Form.Item
               label={t("username").toString()}

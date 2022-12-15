@@ -5,6 +5,7 @@
     "warning": ""
   },
   "login": {
+    "title": "Pusher đăng nhập",
     "username": "Tên người dùng",
     "password": "Mật khẩu",
     "username-message": "Vui lòng nhập tên người dùng của bạn!",
@@ -16,6 +17,7 @@
     "warning": "Cảnh báo đăng nhập!"
   },
   "operate": {
+    "title": "Pusher operate",
     "deploy-cabinet": "Triển khai cabinet",
     "recycle-cabinet": "Thu hồi cabinet",
     "recycle-powerbank": "Thu hồi pin sạc"
@@ -30,18 +32,25 @@
     "submit-button": "Triển khai",
     "success": "Triển khai cabinet thành công!",
     "warning": "Triển khai cabinet gặp vấn đề!",
-    "validate": "Vui lòng đầy đủ thông tin"
+    "validate": "Vui lòng đầy đủ thông tin",
+    "continue-deploy": "Tiếp tục triển khai"
   },
   "recycle-cabinet": {
     "title": "Thu hồi cabinet",
     "cabinet": "Cabinet",
-    "reason": "lý do",
+    "reason": "Lý do",
     "reject-powerbank": "Bật pin sạc khi thu hồi",
     "cabin-message": "Vui lòng quét qrcode Cabinet!",
     "reason-message": "Vui lòng chọn lý do thu hồi!",
     "reject-powerbank-message": "Vui lòng chọn loại powerbank!",
     "submit-button": "Thu hồi",
     "success": "Thu hồi cabinet thành công!",
-    "warning": "Thu hồi cabinet gặp vấn đề!"
+    "warning": "Thu hồi cabinet gặp vấn đề!",
+    "continue-recycle": "Tiếp tục thu hồi",
+    "true": "Có",
+    "false": "Không",
+    "adjust": "Điều chỉnh",
+    "fault": "Lỗi",
+    "validate": "Vui lòng đầy đủ thông tin"
   }
 }

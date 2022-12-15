@@ -29,12 +29,17 @@ import {
   HddOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const Operate: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "operate" });
   const [loading, setLoading] = React.useState(true);
   const [user, setUser] = React.useState<CustomUserDetail>();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    document.title = t("title");
+  }, [t]);
 
   React.useEffect(() => {
     checkHeathWorker()
@@ -72,6 +77,7 @@ export const Operate: FC = () => {
     cleanUser();
     cleanToken();
     navigate("/login");
+    delete axios.defaults.headers.common["Authorization"];
   };
 
   return (

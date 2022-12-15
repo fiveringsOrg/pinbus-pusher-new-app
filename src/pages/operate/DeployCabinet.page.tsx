@@ -22,6 +22,13 @@ import { useNavigate } from "react-router-dom";
 import { MerchantSearchInput } from "../../components/MerchantSearchInput";
 import { deployCabinet } from "../../api/pusher.api";
 import { checkHeathWorker } from "../../api/login.api";
+import {
+  messageError,
+  messageSuccess,
+  messageWarning,
+  modalSuccess,
+} from "../../utils/notice.util";
+import { MerchantSearchTable } from "../../components/MerchantSearchTable";
 
 export const DeployCabinet: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "deploy-cabinet" });
@@ -34,25 +41,9 @@ export const DeployCabinet: FC = () => {
   const [merchant, setMerchant] = React.useState<number>();
   const [cabinet, setCabinet] = React.useState<string>();
 
-  const success = (content: string) => {
-    message.open({
-      type: "success",
-      content: content ? content : t("success"),
-    });
-  };
-
-  const error = (content: string) => {
-    message.open({
-      type: "error",
-      content: content ? content : t("error"),
-    });
-  };
-
-  const warning = (content: string) => {
-    message.open({
-      type: "warning",
-      content: content ? content : t("warning"),
-    });
+  const cleanCaches = () => {
+    setMerchant(undefined);
+    setCabinet(undefined);
   };
 
   const onMerchantChange = (merchantId: number) => {
@@ -60,22 +51,46 @@ export const DeployCabinet: FC = () => {
   };
 
   const onDeployCabinet = () => {
-    if (merchant == null && cabinet == null) {
-      warning(t("validate"));
+    setIsLogin(false);
+    if (
+      merchant == null ||
+      cabinet == null ||
+      merchant === undefined ||
+      cabinet === undefined
+    ) {
+      messageWarning(t("validate"));
+      setIsLogin(true);
       return;
     }
     deployCabinet({ merchantId: merchant, deviceCode: cabinet })
       .then((response) => {
         if (response && response.status === 200) {
-          success(t("success"));
+          modalSuccess(t("success"), t("continue-deploy"), navigate);
         } else if (response && response.data.status === "ERROR") {
-          error(response.data.message);
+          messageError(response.data.message.toString().substring(0, 30));
         } else {
-          warning(t("warning"));
+          messageWarning(t("warning"));
         }
+        cleanCaches();
+        setIsLogin(true);
       })
-      .catch((err) => error(err));
+      .catch((err) => {
+        messageError(err?.response?.data?.message.toString().substring(0, 30));
+        cleanCaches();
+        setIsLogin(true);
+      });
   };
+
+  const onQrScanner = () => {
+    setCabinet(undefined);
+    setIsScanner(true);
+    videoRef.hidden = false;
+    qrScanner?.start();
+  };
+
+  React.useEffect(() => {
+    document.title = t("title");
+  }, [t]);
 
   React.useEffect(() => {
     checkHeathWorker()
@@ -122,10 +137,13 @@ export const DeployCabinet: FC = () => {
                 result.data.toString().replace("https://pinbus.com.vn/cb/", "")
               );
               setIsScanner(false);
+              videoRef.hidden = true;
+              qrScanner?.stop();
             }
           },
           {
             /* your options or returnDetailedScanResult: true if you're not specifying any other options */
+            highlightScanRegion: true,
           }
         )
       );
@@ -136,7 +154,7 @@ export const DeployCabinet: FC = () => {
     if (cabinet) {
       qrScanner?.stop();
     }
-  }, [cabinet, qrScanner]);
+  }, [cabinet]);
 
   React.useEffect(() => {
     if (getStorageUser()) {
@@ -200,30 +218,14 @@ export const DeployCabinet: FC = () => {
                 className="login-form"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
+                initialValues={{ cabinet: cabinet, merchant: merchant }}
               >
-                <Form.Item
-                  label={t("merchant").toString()}
-                  name={t("merchant").toString()}
-                  rules={[
-                    {
-                      required: false,
-                      message: t("merchant-message").toString(),
-                    },
-                  ]}
-                >
-                  <MerchantSearchInput
-                    placeholder={t("merchant-search")}
-                    onMerchantChange={onMerchantChange}
-                    style={{}}
-                  />
-                </Form.Item>
                 <Form.Item
                   label={t("cabinet").toString()}
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: true,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
@@ -238,16 +240,43 @@ export const DeployCabinet: FC = () => {
                         <Tooltip>
                           <Button
                             icon={<QrcodeOutlined />}
-                            onClick={() => {
-                              setIsScanner(true);
-                              qrScanner?.start();
-                            }}
+                            onClick={() => onQrScanner()}
                           />
                         </Tooltip>
                       }
                     />
                   </div>
                 </Form.Item>
+                <Form.Item
+                  label={t("merchant").toString()}
+                  name={t("merchant").toString()}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("merchant-message").toString(),
+                    },
+                  ]}
+                >
+                  <MerchantSearchInput
+                    placeholder={t("merchant-search")}
+                    onMerchantChange={onMerchantChange}
+                    merchantId={Number(merchant)}
+                    style={{}}
+                  />
+                </Form.Item>
+
+                {/* <Form.Item
+                  label={t("merchant").toString()}
+                  name={t("merchant").toString()}
+                  rules={[
+                    {
+                      required: false,
+                      message: t("merchant-message").toString(),
+                    },
+                  ]}
+                >
+                  <MerchantSearchTable />
+                </Form.Item> */}
 
                 <Form.Item>
                   <Space direction="vertical" style={{ width: "100%" }}>
@@ -255,7 +284,9 @@ export const DeployCabinet: FC = () => {
                       type="primary"
                       block
                       htmlType="submit"
-                      onClick={() => onDeployCabinet()}
+                      onClick={() => {
+                        onDeployCabinet();
+                      }}
                     >
                       {t("submit-button")}
                     </Button>
@@ -266,13 +297,45 @@ export const DeployCabinet: FC = () => {
           </div>
         </div>
       )}
-      <video
-        id="qr-video"
-        style={{
-          width: "100vw",
-        }}
-        hidden={false}
-      ></video>
+      <div>
+        {isScanner && (
+          <div
+            style={{
+              padding: "8px 8px 8px 8px",
+              backgroundColor: "white",
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <LeftOutlined
+              onClick={() => {
+                setIsScanner(false);
+                qrScanner?.stop();
+              }}
+            />
+            <Title
+              level={5}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 auto",
+              }}
+            >
+              {t("title")}
+            </Title>
+            <div style={{ width: "16px" }}></div>
+          </div>
+        )}
+        <video
+          id="qr-video"
+          style={{
+            width: "100vw",
+          }}
+          hidden={false}
+        ></video>
+      </div>
     </div>
   );
 };

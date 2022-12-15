@@ -7,6 +7,7 @@ export const MerchantSearchInput: React.FC<{
   placeholder: string;
   style: React.CSSProperties;
   onMerchantChange: any;
+  merchantId: number;
 }> = (props) => {
   const [data, setData] = useState<SelectProps["options"]>([]);
   const [value, setValue] = useState<number>();
@@ -33,6 +34,7 @@ export const MerchantSearchInput: React.FC<{
       size="large"
       showSearch
       value={value}
+      defaultValue={props.merchantId ? props.merchantId : null}
       placeholder={props.placeholder}
       style={props.style}
       defaultActiveFirstOption={false}

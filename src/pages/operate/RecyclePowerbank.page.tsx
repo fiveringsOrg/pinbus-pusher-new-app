@@ -69,6 +69,11 @@ export const RecyclePowerbank: FC = () => {
       })
       .catch((err) => error(err));
   };
+
+  React.useEffect(() => {
+    document.title = t("title");
+  }, [t]);
+
   React.useEffect(() => {
     if (videoRef) {
       setQrScanner(

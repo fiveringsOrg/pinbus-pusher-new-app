@@ -23,6 +23,11 @@ import { useNavigate } from "react-router-dom";
 import { MerchantSearchInput } from "../../components/MerchantSearchInput";
 import { deployCabinet, recycleCabinet } from "../../api/pusher.api";
 import { checkHeathWorker } from "../../api/login.api";
+import {
+  messageWarning,
+  modalSuccess,
+  messageError,
+} from "../../utils/notice.util";
 
 export const RecycleCabinet: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "recycle-cabinet" });
@@ -36,43 +41,61 @@ export const RecycleCabinet: FC = () => {
   const [reason, setReason] = React.useState<string>();
   const [playFlag, setPlayFlag] = React.useState<string>();
 
-  const success = (content: string) => {
-    message.open({
-      type: "success",
-      content: content ? content : t("success"),
-    });
-  };
-
-  const error = (content: string) => {
-    message.open({
-      type: "error",
-      content: content ? content : t("error"),
-    });
-  };
-
-  const warning = (content: string) => {
-    message.open({
-      type: "warning",
-      content: content ? content : t("warning"),
-    });
+  const cleanCaches = () => {
+    setCabinet(undefined);
+    setPlayFlag(undefined);
+    setReason(undefined);
   };
 
   const onRecycleCabinet = () => {
-    if (!reason && !cabinet && !playFlag) {
-      warning(t("validate"));
+    setIsLogin(false);
+    if (
+      reason == null ||
+      cabinet == null ||
+      playFlag == null ||
+      reason === undefined ||
+      cabinet === undefined ||
+      playFlag === undefined
+    ) {
+      messageWarning(t("validate"));
+      setIsLogin(true);
+      return;
     }
     recycleCabinet(cabinet, reason, playFlag)
       .then((response) => {
         if (response && response.status === 200) {
-          success(t("success"));
-        } else if (response && response.data.status === "ERROR") {
-          error(response.data.message);
+          modalSuccess(t("success"), t("continue-recycle"), navigate);
+        } else if (response.status === 500) {
+          messageError(response.data.message.toString().substring(0, 30));
         } else {
-          warning(t("warning"));
+          messageWarning(t("warning"));
         }
+        cleanCaches();
+        setIsLogin(true);
       })
-      .catch((err) => error(err));
+      .catch((err) => {
+        messageError(err?.response?.data?.message.toString().substring(0, 30));
+        cleanCaches();
+        setIsLogin(true);
+      });
   };
+
+  const onQrScanner = () => {
+    setCabinet(undefined);
+    setIsScanner(true);
+    videoRef.hidden = false;
+    qrScanner?.start();
+  };
+
+  React.useEffect(() => {
+    document.title = t("title");
+  }, [t]);
+
+  React.useEffect(() => {
+    if (cabinet) {
+      qrScanner?.stop();
+    }
+  }, [cabinet]);
 
   React.useEffect(() => {
     checkHeathWorker()
@@ -91,6 +114,30 @@ export const RecycleCabinet: FC = () => {
       });
   }, [navigate]);
 
+  const prepareScanQrCode = () => {
+    if (videoRef) {
+      setQrScanner(
+        new QrScanner(
+          videoRef,
+          (result: any) => {
+            if (result) {
+              setCabinet(
+                result.data.toString().replace("https://pinbus.com.vn/cb/", "")
+              );
+              setIsScanner(false);
+              videoRef.hidden = true;
+              qrScanner?.stop();
+            }
+          },
+          {
+            /* your options or returnDetailedScanResult: true if you're not specifying any other options */
+            highlightScanRegion: true,
+          }
+        )
+      );
+    }
+  };
+
   React.useEffect(() => {
     if (videoRef) {
       setQrScanner(
@@ -102,21 +149,17 @@ export const RecycleCabinet: FC = () => {
                 result.data.toString().replace("https://pinbus.com.vn/cb/", "")
               );
               setIsScanner(false);
+              qrScanner?.stop();
             }
           },
           {
             /* your options or returnDetailedScanResult: true if you're not specifying any other options */
+            highlightScanRegion: true,
           }
         )
       );
     }
   }, [videoRef]);
-
-  React.useEffect(() => {
-    if (cabinet) {
-      qrScanner?.stop();
-    }
-  }, [cabinet, qrScanner]);
 
   React.useEffect(() => {
     if (getStorageUser()) {
@@ -180,14 +223,18 @@ export const RecycleCabinet: FC = () => {
                 className="login-form"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
+                initialValues={{
+                  reason: reason,
+                  cabinet: cabinet,
+                  playFlag: playFlag,
+                }}
               >
                 <Form.Item
                   label={t("cabinet").toString()}
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: true,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
@@ -202,10 +249,7 @@ export const RecycleCabinet: FC = () => {
                         <Tooltip>
                           <Button
                             icon={<QrcodeOutlined />}
-                            onClick={() => {
-                              setIsScanner(true);
-                              qrScanner?.start();
-                            }}
+                            onClick={() => onQrScanner()}
                           />
                         </Tooltip>
                       }
@@ -218,7 +262,7 @@ export const RecycleCabinet: FC = () => {
                   name={t("reason").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: true,
                       message: t("reason-message").toString(),
                     },
                   ]}
@@ -230,11 +274,11 @@ export const RecycleCabinet: FC = () => {
                     options={[
                       {
                         value: "03801",
-                        label: "Adjust",
+                        label: t("adjust"),
                       },
                       {
                         value: "03802",
-                        label: "Fault",
+                        label: t("fault"),
                       },
                     ]}
                   />
@@ -245,7 +289,7 @@ export const RecycleCabinet: FC = () => {
                   name={t("reject-powerbank").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: true,
                       message: t("reject-powerbank-message").toString(),
                     },
                   ]}
@@ -257,11 +301,11 @@ export const RecycleCabinet: FC = () => {
                     options={[
                       {
                         value: "00201",
-                        label: "True",
+                        label: t("true"),
                       },
                       {
                         value: "00202",
-                        label: "False",
+                        label: t("false"),
                       },
                     ]}
                   />
@@ -284,13 +328,45 @@ export const RecycleCabinet: FC = () => {
           </div>
         </div>
       )}
-      <video
-        id="qr-video"
-        style={{
-          width: "100vw",
-        }}
-        hidden={false}
-      ></video>
+      <div>
+        {isScanner && (
+          <div
+            style={{
+              padding: "8px 8px 8px 8px",
+              backgroundColor: "white",
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <LeftOutlined
+              onClick={() => {
+                setIsScanner(false);
+                qrScanner?.stop();
+              }}
+            />
+            <Title
+              level={5}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 auto",
+              }}
+            >
+              {t("title")}
+            </Title>
+            <div style={{ width: "16px" }}></div>
+          </div>
+        )}
+        <video
+          id="qr-video"
+          style={{
+            width: "100vw",
+          }}
+          hidden={false}
+        ></video>
+      </div>
     </div>
   );
 };
