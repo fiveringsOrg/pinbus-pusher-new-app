@@ -34,7 +34,11 @@
     "warning": "Deploy cabinet have some isssue!",
     "validate": "Please update information",
     "continue-deploy": "Continue deploy",
-    "deploying-error": "Cabinet is in stock or already deployed"
+    "deploying-error": "Cabinet is in stock or already deployed",
+    "reject-powerbank": "Reject powerbank",
+    "reject-powerbank-message": "Please choose reject powerbank!",
+    "true": "Yes",
+    "false": "No"
   },
   "recycle-cabinet": {
     "title": "Recycle the cabinet",

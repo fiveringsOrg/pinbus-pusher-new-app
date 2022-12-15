@@ -35,7 +35,11 @@
     "warning": "Triển khai cabinet gặp vấn đề!",
     "validate": "Vui lòng đầy đủ thông tin",
     "continue-deploy": "Tiếp tục triển khai",
-    "deploying-error": "Cabinet đang trong kho hoặc đã được triển khai"
+    "deploying-error": "Cabinet đang trong kho hoặc đã được triển khai",
+    "reject-powerbank": "Bật pin sạc khi thu hồi",
+    "reject-powerbank-message": "Vui lòng chọn loại powerbank!",
+    "true": "Có",
+    "false": "Không"
   },
   "recycle-cabinet": {
     "title": "Thu hồi cabinet",

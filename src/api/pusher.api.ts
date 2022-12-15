@@ -11,8 +11,12 @@ export function queryLastSevenDaysDailyStatis() {
   return axios.post(API_URL + `/queryLastSevenDaysDailyStatis`);
 }
 
-export function deployCabinet(deployDto: any) {
-  return axios.post(API_URL + `/deployCabinet`, deployDto);
+export function deployCabinet(deployDto: any, playFlag: any) {
+  return axios.post(API_URL + `/deployCabinet`, deployDto, {
+    params: {
+      playFlag: playFlag,
+    },
+  });
 }
 
 export function deployPowerbank(deviceCode: any, snList: any[]) {

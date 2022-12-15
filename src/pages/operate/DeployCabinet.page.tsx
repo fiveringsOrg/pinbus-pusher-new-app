@@ -8,6 +8,7 @@ import {
   message,
   Spin,
   Tooltip,
+  Select,
 } from "antd";
 import { QrcodeOutlined, LeftOutlined, HddOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -46,17 +47,25 @@ export const DeployCabinet: FC = () => {
   const [isValidateMerchant, setIsValidateMerchant] =
     React.useState<boolean>(true);
 
+  const [isValidateRejectPowerbank, setIsValidateRejectPowerbank] =
+    React.useState<boolean>(true);
+  const [playFlag, setPlayFlag] = React.useState<string>();
+
   const cleanCaches = () => {
     setMerchant(undefined);
     setCabinet(undefined);
+    setPlayFlag(undefined);
     setIsValidateCabinet(true);
     setIsValidateMerchant(true);
+    setIsValidateRejectPowerbank(true);
   };
 
   const onMerchantChange = (merchantId: number) => {
     if (merchantId) {
+      setIsValidateRejectPowerbank(false);
       setIsValidateMerchant(false);
     } else {
+      setIsValidateRejectPowerbank(true);
       setIsValidateMerchant(true);
     }
     setMerchant(merchantId);
@@ -67,14 +76,16 @@ export const DeployCabinet: FC = () => {
     if (
       merchant == null ||
       cabinet == null ||
+      playFlag == null ||
       merchant === undefined ||
-      cabinet === undefined
+      cabinet === undefined ||
+      playFlag === undefined
     ) {
       messageWarning(t("validate"));
       setIsLogin(true);
       return;
     }
-    deployCabinet({ merchantId: merchant, deviceCode: cabinet })
+    deployCabinet({ merchantId: merchant, deviceCode: cabinet }, playFlag)
       .then((response) => {
         if (response && response.status === 200) {
           modalSuccess(t("success"), t("continue-deploy"), navigate);
@@ -292,6 +303,38 @@ export const DeployCabinet: FC = () => {
                     merchantId={Number(merchant)}
                     disabled={isValidateMerchant}
                     style={{}}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label={t("reject-powerbank").toString()}
+                  name={t("reject-powerbank").toString()}
+                  rules={[
+                    {
+                      required: !isValidateRejectPowerbank,
+                      message: t("reject-powerbank-message").toString(),
+                    },
+                  ]}
+                >
+                  <Select
+                    size="large"
+                    value={playFlag}
+                    defaultValue={playFlag}
+                    disabled={isValidateRejectPowerbank}
+                    allowClear
+                    onChange={(value) => {
+                      setPlayFlag(value);
+                    }}
+                    options={[
+                      {
+                        value: "00201",
+                        label: t("true"),
+                      },
+                      {
+                        value: "00202",
+                        label: t("false"),
+                      },
+                    ]}
                   />
                 </Form.Item>
 
