@@ -67,7 +67,7 @@ export const DeployCabinet: FC = () => {
         if (response && response.status === 200) {
           modalSuccess(t("success"), t("continue-deploy"), navigate);
         } else if (response && response.data.status === "ERROR") {
-          messageError(response.data.message.toString().substring(0, 30));
+          messageError(t("deploying-error"));
         } else {
           messageWarning(t("warning"));
         }
@@ -75,7 +75,7 @@ export const DeployCabinet: FC = () => {
         setIsLogin(true);
       })
       .catch((err) => {
-        messageError(err?.response?.data?.message.toString().substring(0, 30));
+        messageError(t("deploying-error"));
         cleanCaches();
         setIsLogin(true);
       });
@@ -218,34 +218,37 @@ export const DeployCabinet: FC = () => {
                 className="login-form"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
-                initialValues={{ cabinet: cabinet, merchant: merchant }}
+                initialValues={{
+                  cabinet: cabinet ? cabinet : undefined,
+                  merchant: merchant ? merchant : undefined,
+                }}
               >
                 <Form.Item
                   label={t("cabinet").toString()}
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: true,
+                      required: false,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
                 >
-                  <div>
-                    <Input
-                      size="large"
-                      value={cabinet}
-                      onChange={(e) => setCabinet(e.target.value)}
-                      prefix={<HddOutlined />}
-                      suffix={
-                        <Tooltip>
-                          <Button
-                            icon={<QrcodeOutlined />}
-                            onClick={() => onQrScanner()}
-                          />
-                        </Tooltip>
-                      }
-                    />
-                  </div>
+                  <Input
+                    size="large"
+                    value={cabinet}
+                    defaultValue={cabinet}
+                    allowClear
+                    onChange={(e) => setCabinet(e.target.value)}
+                    prefix={<HddOutlined />}
+                    suffix={
+                      <Tooltip>
+                        <Button
+                          icon={<QrcodeOutlined />}
+                          onClick={() => onQrScanner()}
+                        />
+                      </Tooltip>
+                    }
+                  />
                 </Form.Item>
                 <Form.Item
                   label={t("merchant").toString()}

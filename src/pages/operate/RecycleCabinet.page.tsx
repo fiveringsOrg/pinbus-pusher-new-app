@@ -66,7 +66,7 @@ export const RecycleCabinet: FC = () => {
         if (response && response.status === 200) {
           modalSuccess(t("success"), t("continue-recycle"), navigate);
         } else if (response.status === 500) {
-          messageError(response.data.message.toString().substring(0, 30));
+          messageError(t("recycling-error"));
         } else {
           messageWarning(t("warning"));
         }
@@ -74,7 +74,7 @@ export const RecycleCabinet: FC = () => {
         setIsLogin(true);
       })
       .catch((err) => {
-        messageError(err?.response?.data?.message.toString().substring(0, 30));
+        messageError(t("recycling-error"));
         cleanCaches();
         setIsLogin(true);
       });
@@ -224,9 +224,9 @@ export const RecycleCabinet: FC = () => {
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{
-                  reason: reason,
-                  cabinet: cabinet,
-                  playFlag: playFlag,
+                  reason: reason ? reason : undefined,
+                  cabinet: cabinet ? cabinet : undefined,
+                  playFlag: playFlag ? playFlag : undefined,
                 }}
               >
                 <Form.Item
@@ -239,22 +239,22 @@ export const RecycleCabinet: FC = () => {
                     },
                   ]}
                 >
-                  <div>
-                    <Input
-                      size="large"
-                      value={cabinet}
-                      onChange={(e) => setCabinet(e.target.value)}
-                      prefix={<HddOutlined />}
-                      suffix={
-                        <Tooltip>
-                          <Button
-                            icon={<QrcodeOutlined />}
-                            onClick={() => onQrScanner()}
-                          />
-                        </Tooltip>
-                      }
-                    />
-                  </div>
+                  <Input
+                    size="large"
+                    value={cabinet}
+                    defaultValue={cabinet}
+                    allowClear
+                    onChange={(e) => setCabinet(e.target.value)}
+                    prefix={<HddOutlined />}
+                    suffix={
+                      <Tooltip>
+                        <Button
+                          icon={<QrcodeOutlined />}
+                          onClick={() => onQrScanner()}
+                        />
+                      </Tooltip>
+                    }
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -269,6 +269,8 @@ export const RecycleCabinet: FC = () => {
                 >
                   <Select
                     value={reason}
+                    defaultValue={reason}
+                    allowClear
                     size="large"
                     onChange={(value) => setReason(value)}
                     options={[
@@ -297,6 +299,8 @@ export const RecycleCabinet: FC = () => {
                   <Select
                     size="large"
                     value={playFlag}
+                    defaultValue={playFlag}
+                    allowClear
                     onChange={(value) => setPlayFlag(value)}
                     options={[
                       {

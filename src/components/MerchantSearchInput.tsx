@@ -34,7 +34,7 @@ export const MerchantSearchInput: React.FC<{
       size="large"
       showSearch
       value={value}
-      defaultValue={props.merchantId ? props.merchantId : null}
+      defaultValue={value}
       placeholder={props.placeholder}
       style={props.style}
       defaultActiveFirstOption={false}

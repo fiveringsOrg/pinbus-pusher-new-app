@@ -33,7 +33,8 @@
     "success": "Deploy cabinet success!",
     "warning": "Deploy cabinet have some isssue!",
     "validate": "Please update information",
-    "continue-deploy": "Continue deploy"
+    "continue-deploy": "Continue deploy",
+    "deploying-error": "Cabinet is in stock or already deployed"
   },
   "recycle-cabinet": {
     "title": "Recycle the cabinet",
@@ -51,6 +52,7 @@
     "true": "Yes",
     "false": "No",
     "adjust": "Adjust",
-    "fault": "Fault"
+    "fault": "Fault",
+    "recycling-error": "Cabinet is in stock or has been withdrawn"
   }
 }

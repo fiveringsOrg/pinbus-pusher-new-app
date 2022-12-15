@@ -161,6 +161,7 @@ export const Login: FC = () => {
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 allowClear
+                autoComplete="on"
                 placeholder={t("password").toString()}
                 size="large"
                 onChange={(e) => setPassword(e.target.value)}
