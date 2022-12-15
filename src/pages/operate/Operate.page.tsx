@@ -86,6 +86,7 @@ export const Operate: FC = () => {
         style={{
           padding: "8px 8px 0px 8px",
           backgroundColor: "white",
+          paddingTop: "24px",
         }}
       >
         {user && (
@@ -217,7 +218,7 @@ export const Operate: FC = () => {
           </div>
           <Divider />
         </Skeleton>
-        <Skeleton loading={loading}>
+        {/* <Skeleton loading={loading}>
           <div
             onClick={() => navigate("/operate/recycle-powerbank")}
             style={{
@@ -254,7 +255,7 @@ export const Operate: FC = () => {
           style={{
             marginBottom: "0px",
           }}
-        />
+        /> */}
       </div>
     </div>
   );

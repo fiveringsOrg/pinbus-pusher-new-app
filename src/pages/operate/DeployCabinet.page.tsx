@@ -40,13 +40,25 @@ export const DeployCabinet: FC = () => {
   const [isScanner, setIsScanner] = React.useState(false);
   const [merchant, setMerchant] = React.useState<number>();
   const [cabinet, setCabinet] = React.useState<string>();
+  const [isValidateCabinet, setIsValidateCabinet] =
+    React.useState<boolean>(true);
+
+  const [isValidateMerchant, setIsValidateMerchant] =
+    React.useState<boolean>(true);
 
   const cleanCaches = () => {
     setMerchant(undefined);
     setCabinet(undefined);
+    setIsValidateCabinet(true);
+    setIsValidateMerchant(true);
   };
 
   const onMerchantChange = (merchantId: number) => {
+    if (merchantId) {
+      setIsValidateMerchant(false);
+    } else {
+      setIsValidateMerchant(true);
+    }
     setMerchant(merchantId);
   };
 
@@ -136,8 +148,12 @@ export const DeployCabinet: FC = () => {
               setCabinet(
                 result.data.toString().replace("https://pinbus.com.vn/cb/", "")
               );
+              setIsValidateCabinet(false);
               setIsScanner(false);
               videoRef.hidden = true;
+
+              setMerchant(undefined);
+              setIsValidateMerchant(false);
               qrScanner?.stop();
             }
           },
@@ -153,6 +169,9 @@ export const DeployCabinet: FC = () => {
   React.useEffect(() => {
     if (cabinet) {
       qrScanner?.stop();
+      setIsValidateCabinet(false);
+    } else {
+      setIsValidateCabinet(true);
     }
   }, [cabinet]);
 
@@ -170,7 +189,7 @@ export const DeployCabinet: FC = () => {
         <div>
           <div
             style={{
-              padding: "8px 8px 8px 8px",
+              padding: "24px 8px 24px 8px",
               backgroundColor: "white",
               display: "flex",
               justifyContent: "flex-start",
@@ -179,11 +198,11 @@ export const DeployCabinet: FC = () => {
           >
             <LeftOutlined onClick={() => navigate("/operate")} />
             <Title
-              level={5}
+              level={4}
               style={{
                 display: "flex",
                 justifyContent: "center",
-                alignItems: "center",
+                alignItems: "flex-end",
                 margin: "0 auto",
               }}
             >
@@ -228,7 +247,7 @@ export const DeployCabinet: FC = () => {
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: isValidateCabinet,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
@@ -238,7 +257,14 @@ export const DeployCabinet: FC = () => {
                     value={cabinet}
                     defaultValue={cabinet}
                     allowClear
-                    onChange={(e) => setCabinet(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setIsValidateMerchant(false);
+                      } else {
+                        setIsValidateMerchant(true);
+                      }
+                      setCabinet(e.target.value);
+                    }}
                     prefix={<HddOutlined />}
                     suffix={
                       <Tooltip>
@@ -255,7 +281,7 @@ export const DeployCabinet: FC = () => {
                   name={t("merchant").toString()}
                   rules={[
                     {
-                      required: true,
+                      required: !isValidateMerchant,
                       message: t("merchant-message").toString(),
                     },
                   ]}
@@ -264,6 +290,7 @@ export const DeployCabinet: FC = () => {
                     placeholder={t("merchant-search")}
                     onMerchantChange={onMerchantChange}
                     merchantId={Number(merchant)}
+                    disabled={isValidateMerchant}
                     style={{}}
                   />
                 </Form.Item>
@@ -281,7 +308,11 @@ export const DeployCabinet: FC = () => {
                   <MerchantSearchTable />
                 </Form.Item> */}
 
-                <Form.Item>
+                <Form.Item
+                  style={{
+                    paddingTop: "50px",
+                  }}
+                >
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <Button
                       type="primary"
@@ -304,7 +335,7 @@ export const DeployCabinet: FC = () => {
         {isScanner && (
           <div
             style={{
-              padding: "8px 8px 8px 8px",
+              padding: "24px 8px 24px 8px",
               backgroundColor: "white",
               display: "flex",
               justifyContent: "flex-start",
@@ -318,7 +349,7 @@ export const DeployCabinet: FC = () => {
               }}
             />
             <Title
-              level={5}
+              level={4}
               style={{
                 display: "flex",
                 justifyContent: "center",

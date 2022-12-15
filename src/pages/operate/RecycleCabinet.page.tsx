@@ -40,11 +40,19 @@ export const RecycleCabinet: FC = () => {
   const [cabinet, setCabinet] = React.useState<string>();
   const [reason, setReason] = React.useState<string>();
   const [playFlag, setPlayFlag] = React.useState<string>();
+  const [isValidateCabinet, setIsValidateCabinet] =
+    React.useState<boolean>(true);
+  const [isValidateReason, setIsValidateReason] = React.useState<boolean>(true);
+  const [isValidateRejectPowerbank, setIsValidateRejectPowerbank] =
+    React.useState<boolean>(true);
 
   const cleanCaches = () => {
     setCabinet(undefined);
     setPlayFlag(undefined);
     setReason(undefined);
+    setIsValidateCabinet(true);
+    setIsValidateReason(true);
+    setIsValidateRejectPowerbank(true);
   };
 
   const onRecycleCabinet = () => {
@@ -90,12 +98,6 @@ export const RecycleCabinet: FC = () => {
   React.useEffect(() => {
     document.title = t("title");
   }, [t]);
-
-  React.useEffect(() => {
-    if (cabinet) {
-      qrScanner?.stop();
-    }
-  }, [cabinet]);
 
   React.useEffect(() => {
     checkHeathWorker()
@@ -149,6 +151,12 @@ export const RecycleCabinet: FC = () => {
                 result.data.toString().replace("https://pinbus.com.vn/cb/", "")
               );
               setIsScanner(false);
+              setIsValidateCabinet(false);
+
+              setPlayFlag(undefined);
+              setReason(undefined);
+
+              setIsValidateReason(false);
               qrScanner?.stop();
             }
           },
@@ -169,13 +177,21 @@ export const RecycleCabinet: FC = () => {
     }
   }, [navigate]);
 
+  React.useEffect(() => {
+    if (cabinet) {
+      qrScanner?.stop();
+    } else {
+      setIsValidateCabinet(true);
+    }
+  }, [cabinet]);
+
   return (
     <div>
       {!isScanner && (
         <div>
           <div
             style={{
-              padding: "8px 8px 8px 8px",
+              padding: "24px 8px 24px 8px",
               backgroundColor: "white",
               display: "flex",
               justifyContent: "flex-start",
@@ -184,7 +200,7 @@ export const RecycleCabinet: FC = () => {
           >
             <LeftOutlined onClick={() => navigate("/operate")} />
             <Title
-              level={5}
+              level={4}
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -234,7 +250,7 @@ export const RecycleCabinet: FC = () => {
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: true,
+                      required: isValidateCabinet,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
@@ -244,7 +260,14 @@ export const RecycleCabinet: FC = () => {
                     value={cabinet}
                     defaultValue={cabinet}
                     allowClear
-                    onChange={(e) => setCabinet(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setIsValidateReason(false);
+                      } else {
+                        setIsValidateReason(true);
+                      }
+                      setCabinet(e.target.value);
+                    }}
                     prefix={<HddOutlined />}
                     suffix={
                       <Tooltip>
@@ -262,7 +285,7 @@ export const RecycleCabinet: FC = () => {
                   name={t("reason").toString()}
                   rules={[
                     {
-                      required: true,
+                      required: !isValidateReason,
                       message: t("reason-message").toString(),
                     },
                   ]}
@@ -270,9 +293,17 @@ export const RecycleCabinet: FC = () => {
                   <Select
                     value={reason}
                     defaultValue={reason}
+                    disabled={isValidateReason}
                     allowClear
                     size="large"
-                    onChange={(value) => setReason(value)}
+                    onChange={(value) => {
+                      if (value) {
+                        setIsValidateRejectPowerbank(false);
+                      } else {
+                        setIsValidateRejectPowerbank(true);
+                      }
+                      setReason(value);
+                    }}
                     options={[
                       {
                         value: "03801",
@@ -291,7 +322,7 @@ export const RecycleCabinet: FC = () => {
                   name={t("reject-powerbank").toString()}
                   rules={[
                     {
-                      required: true,
+                      required: !isValidateRejectPowerbank,
                       message: t("reject-powerbank-message").toString(),
                     },
                   ]}
@@ -300,8 +331,11 @@ export const RecycleCabinet: FC = () => {
                     size="large"
                     value={playFlag}
                     defaultValue={playFlag}
+                    disabled={isValidateRejectPowerbank}
                     allowClear
-                    onChange={(value) => setPlayFlag(value)}
+                    onChange={(value) => {
+                      setPlayFlag(value);
+                    }}
                     options={[
                       {
                         value: "00201",
@@ -315,7 +349,11 @@ export const RecycleCabinet: FC = () => {
                   />
                 </Form.Item>
 
-                <Form.Item>
+                <Form.Item
+                  style={{
+                    paddingTop: "50px",
+                  }}
+                >
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <Button
                       type="primary"
@@ -336,7 +374,7 @@ export const RecycleCabinet: FC = () => {
         {isScanner && (
           <div
             style={{
-              padding: "8px 8px 8px 8px",
+              padding: "24px 8px 24px 8px",
               backgroundColor: "white",
               display: "flex",
               justifyContent: "flex-start",
@@ -350,7 +388,7 @@ export const RecycleCabinet: FC = () => {
               }}
             />
             <Title
-              level={5}
+              level={4}
               style={{
                 display: "flex",
                 justifyContent: "center",

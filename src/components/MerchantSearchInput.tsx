@@ -8,6 +8,7 @@ export const MerchantSearchInput: React.FC<{
   style: React.CSSProperties;
   onMerchantChange: any;
   merchantId: number;
+  disabled: boolean;
 }> = (props) => {
   const [data, setData] = useState<SelectProps["options"]>([]);
   const [value, setValue] = useState<number>();
@@ -31,6 +32,7 @@ export const MerchantSearchInput: React.FC<{
 
   return (
     <Select
+      disabled={props.disabled}
       size="large"
       showSearch
       value={value}
