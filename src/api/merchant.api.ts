@@ -18,3 +18,12 @@ export function pageQuery(
     },
   });
 }
+
+export function queryForDeploy(parentId: any, searchWord: any) {
+  return axios.post(
+    HOST +
+      `/api/merchant/mobile/queryMerchantForDeploy?parentId=${parentId}&searchWord=${searchWord}`,
+    null,
+    {}
+  );
+}

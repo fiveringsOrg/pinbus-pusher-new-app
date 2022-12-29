@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Select } from "antd";
 import type { SelectProps } from "antd";
-import { pageQuery } from "../api/merchant.api";
+import { pageQuery, queryForDeploy } from "../api/merchant.api";
+import { getStorageUser } from "../utils/storage.util";
+import { CustomUserDetail } from "../models/user.model";
 
 export const MerchantSearchInput: React.FC<{
   placeholder: string;
@@ -15,9 +17,9 @@ export const MerchantSearchInput: React.FC<{
 
   const handleSearch = (newValue: string) => {
     if (newValue) {
-      pageQuery(1, 10, true, newValue).then((response) => {
+      queryForDeploy(null, null).then((response) => {
         if (response) {
-          setData(response.data.result.rows);
+          setData(response.data);
         }
       });
     } else {
@@ -47,7 +49,7 @@ export const MerchantSearchInput: React.FC<{
       notFoundContent={null}
       options={(data || []).map((d) => ({
         value: d.id,
-        label: d.name,
+        label: d.name + "-" + d.address,
       }))}
     />
   );
