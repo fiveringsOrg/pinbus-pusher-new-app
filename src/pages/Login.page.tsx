@@ -47,7 +47,7 @@ export const Login: FC = () => {
         .then((response) => {
           if (response && response.data.status === "NORMAL") {
             saveToken(response.data.result);
-            messageSuccess("");
+            messageSuccess(t("success"));
             axios.defaults.headers.common["Authorization"] =
               response.data.result;
             getUser().then((user) => {
@@ -63,7 +63,7 @@ export const Login: FC = () => {
             messageError(response.data.message);
             clearCaches();
           } else {
-            messageWarning("");
+            messageWarning(t("warning"));
             clearCaches();
           }
         })
@@ -73,7 +73,7 @@ export const Login: FC = () => {
         });
     } else {
       clearCaches();
-      messageWarning("");
+      messageWarning(t("warning"));
     }
   };
 

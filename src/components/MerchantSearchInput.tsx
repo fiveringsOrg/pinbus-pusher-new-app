@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Select } from "antd";
+import { Divider, Select } from "antd";
 import type { SelectProps } from "antd";
 import { pageQuery, queryForDeploy } from "../api/merchant.api";
 import { getStorageUser } from "../utils/storage.util";
 import { CustomUserDetail } from "../models/user.model";
+const { Option } = Select;
 
 export const MerchantSearchInput: React.FC<{
   placeholder: string;
@@ -17,9 +18,9 @@ export const MerchantSearchInput: React.FC<{
 
   const handleSearch = (newValue: string) => {
     if (newValue) {
-      queryForDeploy(null, null).then((response) => {
+      queryForDeploy(null, null, 1, 10).then((response) => {
         if (response) {
-          setData(response.data);
+          setData(response.data.result);
         }
       });
     } else {
@@ -47,10 +48,23 @@ export const MerchantSearchInput: React.FC<{
       onSearch={handleSearch}
       onChange={handleChange}
       notFoundContent={null}
-      options={(data || []).map((d) => ({
-        value: d.id,
-        label: d.name + "-" + d.address,
-      }))}
-    />
+      listHeight={256}
+      dropdownMatchSelectWidth={true}
+      optionLabelProp="label"
+    >
+      {(data || []).map((d) => (
+        <Select.Option value={d.id} label={d.name + " - \n" + d.address}>
+          <div>{d.name}</div>
+          <div
+            style={{
+              inlineSize: "100px",
+              overflowWrap: "break-word",
+            }}
+          >
+            {d.address}
+          </div>
+        </Select.Option>
+      ))}
+    </Select>
   );
 };

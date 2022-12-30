@@ -5,6 +5,9 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./locales/i18n";
 
+document.body.style.overflow = "hidden";
+document.body.style.height = "100%";
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

@@ -19,10 +19,15 @@ export function pageQuery(
   });
 }
 
-export function queryForDeploy(parentId: any, searchWord: any) {
+export function queryForDeploy(
+  parentId: any,
+  searchWord: any,
+  pNumber: any,
+  pSize: any
+) {
   return axios.post(
     HOST +
-      `/api/merchant/mobile/queryMerchantForDeploy?parentId=${parentId}&searchWord=${searchWord}`,
+      `/api/merchant/mobile/queryMerchantForDeploy?parentId=${parentId}&searchWord=${searchWord}&pNumber=${pNumber}&pSize=${pSize}`,
     null,
     {}
   );

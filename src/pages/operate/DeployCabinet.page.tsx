@@ -10,7 +10,12 @@ import {
   Tooltip,
   Select,
 } from "antd";
-import { QrcodeOutlined, LeftOutlined, HddOutlined } from "@ant-design/icons";
+import {
+  QrcodeOutlined,
+  LeftOutlined,
+  HddOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import QrScanner from "qr-scanner";
 import Title from "antd/es/typography/Title";
@@ -30,6 +35,7 @@ import {
   modalSuccess,
 } from "../../utils/notice.util";
 import { MerchantSearchTable } from "../../components/MerchantSearchTable";
+import { DataType, Merchant } from "../Merchant.page";
 
 export const DeployCabinet: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "deploy-cabinet" });
@@ -39,7 +45,7 @@ export const DeployCabinet: FC = () => {
 
   const [isLogin, setIsLogin] = React.useState(false);
   const [isScanner, setIsScanner] = React.useState(false);
-  const [merchant, setMerchant] = React.useState<number>();
+  const [merchant, setMerchant] = React.useState<DataType>();
   const [cabinet, setCabinet] = React.useState<string>();
   const [isValidateCabinet, setIsValidateCabinet] =
     React.useState<boolean>(true);
@@ -50,6 +56,7 @@ export const DeployCabinet: FC = () => {
   const [isValidateRejectPowerbank, setIsValidateRejectPowerbank] =
     React.useState<boolean>(true);
   const [playFlag, setPlayFlag] = React.useState<string>();
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const cleanCaches = () => {
     setMerchant(undefined);
@@ -60,15 +67,28 @@ export const DeployCabinet: FC = () => {
     setIsValidateRejectPowerbank(true);
   };
 
-  const onMerchantChange = (merchantId: number) => {
-    if (merchantId) {
+  const showMerchantModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen(false);
+  };
+
+  const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen(false);
+  };
+
+  const handleSelectMerchant = (merchants: any[]) => {
+    setMerchant(merchants[0]);
+    setOpen(false);
+    if (merchants.length > 0) {
       setIsValidateRejectPowerbank(false);
-      setIsValidateMerchant(false);
     } else {
       setIsValidateRejectPowerbank(true);
-      setIsValidateMerchant(true);
     }
-    setMerchant(merchantId);
   };
 
   const onDeployCabinet = () => {
@@ -85,7 +105,7 @@ export const DeployCabinet: FC = () => {
       setIsLogin(true);
       return;
     }
-    deployCabinet({ merchantId: merchant, deviceCode: cabinet }, playFlag)
+    deployCabinet({ merchantId: merchant.id, deviceCode: cabinet }, playFlag)
       .then((response) => {
         if (response && response.status === 200) {
           modalSuccess(t("success"), t("continue-deploy"), navigate);
@@ -244,18 +264,18 @@ export const DeployCabinet: FC = () => {
               </div>
             ) : (
               <Form
-                name="basic"
-                className="login-form"
+                name="deploy-cabinet"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{
-                  cabinet: cabinet ? cabinet : undefined,
-                  merchant: merchant ? merchant : undefined,
+                  cabinet: cabinet,
+                  merchant: merchant?.name,
+                  playFlag: playFlag,
                 }}
               >
                 <Form.Item
                   label={t("cabinet").toString()}
-                  name={t("cabinet").toString()}
+                  name="cabinet"
                   rules={[
                     {
                       required: isValidateCabinet,
@@ -266,7 +286,6 @@ export const DeployCabinet: FC = () => {
                   <Input
                     size="large"
                     value={cabinet}
-                    defaultValue={cabinet}
                     allowClear
                     onChange={(e) => {
                       if (e.target.value) {
@@ -289,7 +308,7 @@ export const DeployCabinet: FC = () => {
                 </Form.Item>
                 <Form.Item
                   label={t("merchant").toString()}
-                  name={t("merchant").toString()}
+                  name="merchant"
                   rules={[
                     {
                       required: !isValidateMerchant,
@@ -297,18 +316,41 @@ export const DeployCabinet: FC = () => {
                     },
                   ]}
                 >
-                  <MerchantSearchInput
+                  {/* <MerchantSearchInput
                     placeholder={t("merchant-search")}
                     onMerchantChange={onMerchantChange}
                     merchantId={Number(merchant)}
                     disabled={isValidateMerchant}
-                    style={{}}
+                    style={{ width: "100%" }}
+                  /> */}
+                  <Input
+                    size="large"
+                    value={merchant ? merchant.name : ""}
+                    disabled={true}
+                    allowClear
+                    suffix={
+                      <Tooltip>
+                        <Button
+                          disabled={isValidateMerchant}
+                          icon={<TeamOutlined />}
+                          onClick={() => showMerchantModal()}
+                        />
+                      </Tooltip>
+                    }
+                  />
+                  <Merchant
+                    open={open}
+                    handleCancel={handleCancel}
+                    handleOk={handleOk}
+                    handleSelectMerchant={handleSelectMerchant}
+                    pNumber={1}
+                    pSize={10}
                   />
                 </Form.Item>
 
                 <Form.Item
                   label={t("reject-powerbank").toString()}
-                  name={t("reject-powerbank").toString()}
+                  name="playFlag"
                   rules={[
                     {
                       required: !isValidateRejectPowerbank,
@@ -319,7 +361,6 @@ export const DeployCabinet: FC = () => {
                   <Select
                     size="large"
                     value={playFlag}
-                    defaultValue={playFlag}
                     disabled={isValidateRejectPowerbank}
                     allowClear
                     onChange={(value) => {

@@ -58,5 +58,11 @@
     "adjust": "Adjust",
     "fault": "Fault",
     "recycling-error": "Cabinet is in stock or has been withdrawn"
+  },
+  "merchant": {
+    "name": "POS name",
+    "address": "POS address",
+    "title": "List POS",
+    "search": "Search POS"
   }
 }

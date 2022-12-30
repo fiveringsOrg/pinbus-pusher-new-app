@@ -8,12 +8,20 @@ const GET_USER_API_URL = HOST + "/api/getUser";
 const CHECK_HEATH_API_URL = HOST + "/api/worker/checkHeathWorker";
 
 export function login(username: any, password: any, agentCode: any) {
-  return axios.post(LOGIN_API_URL, {
-    loginType: "21",
-    username: username,
-    password: password,
-    agentCode: agentCode,
-  });
+  return axios.post(
+    LOGIN_API_URL,
+    {
+      loginType: "21",
+      username: username,
+      password: password,
+      agentCode: agentCode,
+    },
+    {
+      headers: {
+        authorization: "",
+      },
+    }
+  );
 }
 
 export function checkHeathWorker() {
