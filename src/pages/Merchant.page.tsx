@@ -141,7 +141,7 @@ export const Merchant: FC<{
         pagination={false}
         loading={loading}
         rowSelection={{
-          type: "checkbox",
+          type: "radio",
           hideSelectAll: true,
           onSelect: onSelectMerchant,
           selectedRowKeys: merchants,
