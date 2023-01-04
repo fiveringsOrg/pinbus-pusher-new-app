@@ -68,8 +68,7 @@ export const Merchant: FC<{
     setLoading(true);
     setPageNumber(props.pNumber);
     queryForDeploy(null, "", props.pNumber, props.pSize).then((response) => {
-      if (response) {
-        console.log(response);
+      if (response && response.data.result) {
         setData(
           response.data.result.map((d: any, index: number) => {
             return {
@@ -82,6 +81,9 @@ export const Merchant: FC<{
             };
           })
         );
+        setLoading(false);
+      } else {
+        setData([]);
         setLoading(false);
       }
     });
@@ -114,7 +116,7 @@ export const Merchant: FC<{
           setLoading(true);
           queryForDeploy(null, searchValue, props.pNumber, props.pSize).then(
             (response) => {
-              if (response) {
+              if (response && response.data.result) {
                 setData(
                   response.data.result.map((d: any, index: number) => {
                     return {
@@ -127,6 +129,9 @@ export const Merchant: FC<{
                     };
                   })
                 );
+                setLoading(false);
+              } else {
+                setData([]);
                 setLoading(false);
               }
             }
@@ -159,7 +164,7 @@ export const Merchant: FC<{
           setLoading(true);
           setPageNumber(page);
           queryForDeploy(null, "", page, props.pSize).then((response) => {
-            if (response) {
+            if (response && response.data.result) {
               setData(
                 response.data.result.map((d: any, index: number) => {
                   return {
@@ -172,6 +177,9 @@ export const Merchant: FC<{
                   };
                 })
               );
+              setLoading(false);
+            } else {
+              setData([]);
               setLoading(false);
             }
           });
