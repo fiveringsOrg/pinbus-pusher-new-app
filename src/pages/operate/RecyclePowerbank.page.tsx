@@ -70,6 +70,7 @@ export const RecyclePowerbank: FC = () => {
     setIsValidateReason(true);
     setIsValidateRejectPowerbank(true);
     setIsValidateRejectPowerbankSlot(true);
+    setCabinetSlotList(undefined);
   };
 
   const onRecyclePowerbank = () => {
@@ -402,7 +403,7 @@ export const RecyclePowerbank: FC = () => {
                         value: "1",
                         label: t("slot-1"),
                         disabled:
-                          cabinetSlotList === undefined
+                          cabinetSlotList?.length === undefined
                             ? true
                             : cabinetSlotList[0].hasBattery === "00201"
                             ? false
