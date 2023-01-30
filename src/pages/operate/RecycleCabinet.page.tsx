@@ -257,6 +257,7 @@ export const RecycleCabinet: FC = () => {
                 >
                   <Input
                     size="large"
+                    disabled={true}
                     value={cabinet}
                     defaultValue={cabinet}
                     allowClear

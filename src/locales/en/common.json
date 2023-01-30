@@ -59,10 +59,36 @@
     "fault": "Fault",
     "recycling-error": "Cabinet is in stock or has been withdrawn"
   },
+  "recycle-powerbank": {
+    "title": "Battery Recovery",
+    "cabinet": "cabinet",
+    "reason": "reason",
+    "reject-powerbank": "Turn on rechargeable battery upon withdrawal",
+    "cabinet-message": "Please scan the cabinet QR code",
+    "reason-message": "Please select a reason for the recall!",
+    "reject-powerbank-message": "Please select the type of powerbank!",
+    "submit-button": "Revoke",
+    "success": "Battery recovery successful!",
+    "warning": "Battery recall has problem!",
+    "continue-recycle": "Continue to withdraw",
+    "true": "Yes",
+    "false": "No",
+    "adjust": "Adjust",
+    "fault": "Error",
+    "validate": "Please complete information",
+    "recycling-error": "The battery slot is empty or has been revoked",
+    "powerbank-slot": "Rechargeable battery number slot",
+    "slot-1": "Slot 1",
+    "slot-2": "Slot 2",
+    "slot-3": "Slot 3",
+    "slot-4": "Slot 4",
+    "slot-5": "Slot 5"
+  },
   "merchant": {
     "name": "POS name",
     "address": "POS address",
     "title": "List POS",
-    "search": "Search POS"
+    "search": "Search POS",
+    "id": "ID"
   }
 }

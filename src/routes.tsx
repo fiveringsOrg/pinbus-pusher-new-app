@@ -23,6 +23,7 @@ export default function Router() {
     { path: "/operate/deploy-cabinet", element: <DeployCabinet /> },
     { path: "/operate/recycle-cabinet", element: <RecycleCabinet /> },
     { path: "/operate/recycle-powerbank", element: <RecyclePowerbank /> },
+    { path: "*", element: <Operate /> },
   ]);
 
   return element;

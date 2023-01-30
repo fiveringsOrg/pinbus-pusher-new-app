@@ -218,6 +218,39 @@ export const Operate: FC = () => {
           </div>
           <Divider />
         </Skeleton>
+        <Skeleton loading={loading}>
+          <div
+            onClick={() => navigate("/operate/recycle-powerbank")}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
+              <HddOutlined style={{ marginRight: "6px" }} />
+              <Meta
+                title={
+                  <div
+                    style={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    {t("recycle-powerbank")}
+                  </div>
+                }
+              />
+            </div>
+            <RightOutlined style={{ marginRight: "6px" }} />
+          </div>
+          <Divider />
+        </Skeleton>
         {/* <Skeleton loading={loading}>
           <div
             onClick={() => navigate("/operate/recycle-powerbank")}

@@ -60,10 +60,36 @@
     "validate": "Vui lòng đầy đủ thông tin",
     "recycling-error": "Cabinet đang trong kho hoặc đã được thu hồi"
   },
+  "recycle-powerbank": {
+    "title": "Thu hồi pin",
+    "cabinet": "Cabinet",
+    "reason": "Lý do",
+    "reject-powerbank": "Bật pin sạc khi thu hồi",
+    "cabinet-message": "Vui lòng quét mã QR cabinet",
+    "reason-message": "Vui lòng chọn lý do thu hồi!",
+    "reject-powerbank-message": "Vui lòng chọn loại powerbank!",
+    "submit-button": "Thu hồi",
+    "success": "Thu hồi pin thành công!",
+    "warning": "Thu hồi pin gặp vấn đề!",
+    "continue-recycle": "Tiếp tục thu hồi",
+    "true": "Có",
+    "false": "Không",
+    "adjust": "Điều chỉnh",
+    "fault": "Lỗi",
+    "validate": "Vui lòng đầy đủ thông tin",
+    "recycling-error": "Khe pin trống hoặc đã được thu hồi",
+    "powerbank-slot": "Pin sạc khe số",
+    "slot-1": "Thứ 1",
+    "slot-2": "Thứ 2",
+    "slot-3": "Thứ 3",
+    "slot-4": "Thứ 4",
+    "slot-5": "Thứ 5"
+  },
   "merchant": {
     "name": "Tên POS",
     "address": "Địa chỉ POS",
     "title": "Danh sách POS",
-    "search": "Tìm kiếm POS"
+    "search": "Tìm kiếm POS",
+    "id": "ID"
   }
 }

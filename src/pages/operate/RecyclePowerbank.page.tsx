@@ -10,11 +10,20 @@ import {
   Tooltip,
   Select,
 } from "antd";
-import { QrcodeOutlined, LeftOutlined, HddOutlined } from "@ant-design/icons";
+import {
+  QrcodeOutlined,
+  LeftOutlined,
+  HddOutlined,
+  MobileFilled,
+} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import QrScanner from "qr-scanner";
 import Title from "antd/es/typography/Title";
-import { getStorageUser } from "../../utils/storage.util";
+import {
+  cleanToken,
+  cleanUser,
+  getStorageUser,
+} from "../../utils/storage.util";
 import { useNavigate } from "react-router-dom";
 import { MerchantSearchInput } from "../../components/MerchantSearchInput";
 import {
@@ -22,9 +31,16 @@ import {
   recycleCabinet,
   recyclePowerbank,
 } from "../../api/pusher.api";
+import { checkHeathWorker } from "../../api/login.api";
+import {
+  messageWarning,
+  modalSuccess,
+  messageError,
+} from "../../utils/notice.util";
+import { ejectSlotV2, queryById } from "../../api/cabinet.api";
 
 export const RecyclePowerbank: FC = () => {
-  const { t } = useTranslation("common", { keyPrefix: "recycle-cabinet" });
+  const { t } = useTranslation("common", { keyPrefix: "recycle-powerbank" });
   const videoRef = document.getElementById("qr-video") as HTMLVideoElement;
   const [qrScanner, setQrScanner] = React.useState<QrScanner>();
   const navigate = useNavigate();
@@ -32,47 +48,125 @@ export const RecyclePowerbank: FC = () => {
   const [isLogin, setIsLogin] = React.useState(false);
   const [isScanner, setIsScanner] = React.useState(false);
   const [cabinet, setCabinet] = React.useState<string>();
+  const [powerbankSlot, setPowerbankSlot] = React.useState<number>();
   const [reason, setReason] = React.useState<string>();
   const [playFlag, setPlayFlag] = React.useState<string>();
+  const [cabinetSlotList, setCabinetSlotList] = React.useState<any[]>();
 
-  const success = (content: string) => {
-    message.open({
-      type: "success",
-      content: content ? content : t("success"),
-    });
-  };
+  const [isValidateCabinet, setIsValidateCabinet] =
+    React.useState<boolean>(true);
+  const [isValidateReason, setIsValidateReason] = React.useState<boolean>(true);
+  const [isValidateRejectPowerbank, setIsValidateRejectPowerbank] =
+    React.useState<boolean>(true);
+  const [isValidatePowerbankSlot, setIsValidateRejectPowerbankSlot] =
+    React.useState<boolean>(true);
 
-  const error = (content: string) => {
-    message.open({
-      type: "error",
-      content: content ? content : t("error"),
-    });
-  };
-
-  const warning = (content: string) => {
-    message.open({
-      type: "warning",
-      content: content ? content : t("warning"),
-    });
+  const cleanCaches = () => {
+    setCabinet(undefined);
+    setPlayFlag(undefined);
+    setReason(undefined);
+    setPowerbankSlot(undefined);
+    setIsValidateCabinet(true);
+    setIsValidateReason(true);
+    setIsValidateRejectPowerbank(true);
+    setIsValidateRejectPowerbankSlot(true);
   };
 
   const onRecyclePowerbank = () => {
-    recyclePowerbank(cabinet, reason, playFlag)
+    setIsLogin(false);
+    if (
+      reason == null ||
+      cabinet == null ||
+      powerbankSlot == null ||
+      reason === undefined ||
+      cabinet === undefined ||
+      powerbankSlot === undefined
+    ) {
+      messageWarning(t("validate"));
+      setIsLogin(true);
+      return;
+    }
+
+    ejectSlotV2(Number(cabinet.slice(4)), Number(powerbankSlot), false)
       .then((response) => {
         if (response && response.status === 200) {
-          success(t("success"));
-        } else if (response && response.data.status === "ERROR") {
-          error(response.data.message);
+          modalSuccess(t("success"), t("continue-recycle"), navigate);
+        } else if (response.status === 500) {
+          messageError(t("recycling-error"));
         } else {
-          warning(t("warning"));
+          messageWarning(t("warning"));
         }
+        cleanCaches();
+        setIsLogin(true);
       })
-      .catch((err) => error(err));
+      .catch((err) => {
+        messageError(t("recycling-error"));
+        cleanCaches();
+        setIsLogin(true);
+      });
+  };
+
+  const onQrScanner = () => {
+    setCabinet(undefined);
+    setIsScanner(true);
+    videoRef.hidden = false;
+    qrScanner?.start();
   };
 
   React.useEffect(() => {
     document.title = t("title");
   }, [t]);
+
+  React.useEffect(() => {
+    if (cabinet) {
+      queryById(cabinet.slice(4)).then((result: any) => {
+        setCabinetSlotList(result.data.result.cabinetSlotList);
+        console.log(result.data.result.cabinetSlotList);
+      });
+    }
+  }, [cabinet]);
+
+  React.useEffect(() => {
+    checkHeathWorker()
+      .then((response) => {
+        if (response && response.data.status === "NORMAL") {
+        } else if (response.status === 401) {
+          cleanUser();
+          cleanToken();
+          navigate("/login");
+        }
+      })
+      .catch((err) => {
+        cleanUser();
+        cleanToken();
+        navigate("/login");
+      });
+  }, [navigate]);
+
+  const prepareScanQrCode = () => {
+    if (videoRef) {
+      setQrScanner(
+        new QrScanner(
+          videoRef,
+          (result: any) => {
+            if (result) {
+              setCabinet(
+                result.data.toString().replace("https://pinbus.com.vn/cb/", "")
+              );
+
+              setIsScanner(false);
+              videoRef.hidden = true;
+              qrScanner?.stop();
+            }
+          },
+          {
+            /* your options or returnDetailedScanResult: true if you're not specifying any other options */
+            highlightScanRegion: true,
+          }
+        )
+      );
+    }
+  };
 
   React.useEffect(() => {
     if (videoRef) {
@@ -85,21 +179,23 @@ export const RecyclePowerbank: FC = () => {
                 result.data.toString().replace("https://pinbus.com.vn/cb/", "")
               );
               setIsScanner(false);
+              setIsValidateCabinet(false);
+
+              setPlayFlag(undefined);
+              setReason(undefined);
+
+              setIsValidateReason(false);
+              qrScanner?.stop();
             }
           },
           {
             /* your options or returnDetailedScanResult: true if you're not specifying any other options */
+            highlightScanRegion: true,
           }
         )
       );
     }
   }, [videoRef]);
-
-  React.useEffect(() => {
-    if (cabinet) {
-      qrScanner?.stop();
-    }
-  }, [cabinet, qrScanner]);
 
   React.useEffect(() => {
     if (getStorageUser()) {
@@ -109,13 +205,21 @@ export const RecyclePowerbank: FC = () => {
     }
   }, [navigate]);
 
+  React.useEffect(() => {
+    if (cabinet) {
+      qrScanner?.stop();
+    } else {
+      setIsValidateCabinet(true);
+    }
+  }, [cabinet]);
+
   return (
     <div>
       {!isScanner && (
         <div>
           <div
             style={{
-              padding: "8px 8px 8px 8px",
+              padding: "24px 8px 24px 8px",
               backgroundColor: "white",
               display: "flex",
               justifyContent: "flex-start",
@@ -124,7 +228,7 @@ export const RecyclePowerbank: FC = () => {
           >
             <LeftOutlined onClick={() => navigate("/operate")} />
             <Title
-              level={5}
+              level={4}
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -163,37 +267,46 @@ export const RecyclePowerbank: FC = () => {
                 className="login-form"
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
+                initialValues={{
+                  reason: reason ? reason : undefined,
+                  cabinet: cabinet ? cabinet : undefined,
+                  playFlag: playFlag ? playFlag : undefined,
+                }}
               >
                 <Form.Item
                   label={t("cabinet").toString()}
                   name={t("cabinet").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: isValidateCabinet,
                       message: t("cabinet-message").toString(),
                     },
                   ]}
                 >
-                  <div>
-                    <Input
-                      size="large"
-                      value={cabinet}
-                      onChange={(e) => setCabinet(e.target.value)}
-                      prefix={<HddOutlined />}
-                      suffix={
-                        <Tooltip>
-                          <Button
-                            icon={<QrcodeOutlined />}
-                            onClick={() => {
-                              setIsScanner(true);
-                              qrScanner?.start();
-                            }}
-                          />
-                        </Tooltip>
+                  <Input
+                    disabled={true}
+                    size="large"
+                    value={cabinet}
+                    defaultValue={cabinet}
+                    allowClear
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setIsValidateReason(false);
+                      } else {
+                        setIsValidateReason(true);
                       }
-                    />
-                  </div>
+                      setCabinet(e.target.value);
+                    }}
+                    prefix={<HddOutlined />}
+                    suffix={
+                      <Tooltip>
+                        <Button
+                          icon={<QrcodeOutlined />}
+                          onClick={() => onQrScanner()}
+                        />
+                      </Tooltip>
+                    }
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -201,34 +314,44 @@ export const RecyclePowerbank: FC = () => {
                   name={t("reason").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: !isValidateReason,
                       message: t("reason-message").toString(),
                     },
                   ]}
                 >
                   <Select
                     value={reason}
+                    defaultValue={reason}
+                    disabled={isValidateReason}
+                    allowClear
                     size="large"
-                    onChange={(value) => setReason(value)}
+                    onChange={(value) => {
+                      if (value) {
+                        setIsValidateRejectPowerbankSlot(false);
+                      } else {
+                        setIsValidateRejectPowerbankSlot(true);
+                      }
+                      setReason(value);
+                    }}
                     options={[
                       {
                         value: "03801",
-                        label: "Adjust",
+                        label: t("adjust"),
                       },
                       {
                         value: "03802",
-                        label: "Fault",
+                        label: t("fault"),
                       },
                     ]}
                   />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   label={t("reject-powerbank").toString()}
                   name={t("reject-powerbank").toString()}
                   rules={[
                     {
-                      required: false,
+                      required: !isValidateRejectPowerbank,
                       message: t("reject-powerbank-message").toString(),
                     },
                   ]}
@@ -236,21 +359,154 @@ export const RecyclePowerbank: FC = () => {
                   <Select
                     size="large"
                     value={playFlag}
-                    onChange={(value) => setPlayFlag(value)}
+                    defaultValue={playFlag}
+                    disabled={isValidateRejectPowerbank}
+                    allowClear
+                    onChange={(value) => {
+                      setPlayFlag(value);
+                    }}
                     options={[
                       {
                         value: "00201",
-                        label: "True",
+                        label: t("true"),
                       },
                       {
                         value: "00202",
-                        label: "False",
+                        label: t("false"),
+                      },
+                    ]}
+                  />
+                </Form.Item> */}
+
+                <Form.Item
+                  label={t("powerbank-slot").toString()}
+                  name={t("powerbank-slot").toString()}
+                  rules={[
+                    {
+                      required: !isValidatePowerbankSlot,
+                      message: t("powerbank-slot-message").toString(),
+                    },
+                  ]}
+                >
+                  <Select
+                    size="large"
+                    value={powerbankSlot}
+                    defaultValue={powerbankSlot}
+                    disabled={isValidatePowerbankSlot}
+                    allowClear
+                    onChange={(value) => {
+                      setPowerbankSlot(value);
+                    }}
+                    options={[
+                      {
+                        value: "1",
+                        label: t("slot-1"),
+                        disabled:
+                          cabinetSlotList === undefined
+                            ? true
+                            : cabinetSlotList[0].hasBattery === "00201"
+                            ? false
+                            : true,
+                      },
+                      {
+                        value: "2",
+                        label: t("slot-2"),
+                        disabled:
+                          cabinetSlotList === undefined
+                            ? true
+                            : cabinetSlotList[1].hasBattery === "00201"
+                            ? false
+                            : true,
+                      },
+                      {
+                        value: "3",
+                        label: t("slot-3"),
+                        disabled:
+                          cabinetSlotList === undefined
+                            ? true
+                            : cabinetSlotList[2].hasBattery === "00201"
+                            ? false
+                            : true,
+                      },
+                      {
+                        value: "4",
+                        label: t("slot-4"),
+                        disabled:
+                          cabinetSlotList === undefined
+                            ? true
+                            : cabinetSlotList[3].hasBattery === "00201"
+                            ? false
+                            : true,
+                      },
+                      {
+                        value: "5",
+                        label: t("slot-5"),
+                        disabled:
+                          cabinetSlotList === undefined
+                            ? true
+                            : cabinetSlotList[4].hasBattery === "00201"
+                            ? false
+                            : true,
                       },
                     ]}
                   />
                 </Form.Item>
 
-                <Form.Item>
+                {cabinetSlotList && (
+                  <Space>
+                    <MobileFilled
+                      style={{
+                        color:
+                          cabinetSlotList[0].hasBattery === "00201"
+                            ? "green"
+                            : "red",
+                        fontSize: "32px",
+                      }}
+                    />
+                    <MobileFilled
+                      style={{
+                        color:
+                          cabinetSlotList[1].hasBattery === "00201"
+                            ? "green"
+                            : "red",
+                        fontSize: "32px",
+                      }}
+                    />
+                    <MobileFilled
+                      style={{
+                        color:
+                          cabinetSlotList[2].hasBattery === "00201"
+                            ? "green"
+                            : "red",
+                        fontSize: "32px",
+                      }}
+                    />
+                    <MobileFilled
+                      style={{
+                        color:
+                          cabinetSlotList[3].hasBattery === "00201"
+                            ? "green"
+                            : "red",
+                        fontSize: "32px",
+                      }}
+                    />
+                    <MobileFilled
+                      style={{
+                        color:
+                          cabinetSlotList[4].hasBattery === "00201"
+                            ? "green"
+                            : "red",
+                        fontSize: "32px",
+                      }}
+                    />
+                  </Space>
+                )}
+
+                <Form.Item
+                  style={{
+                    paddingTop: "50px",
+                  }}
+                >
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <Button
                       type="primary"
@@ -267,13 +523,45 @@ export const RecyclePowerbank: FC = () => {
           </div>
         </div>
       )}
-      <video
-        id="qr-video"
-        style={{
-          width: "100vw",
-        }}
-        hidden={false}
-      ></video>
+      <div>
+        {isScanner && (
+          <div
+            style={{
+              padding: "24px 8px 24px 8px",
+              backgroundColor: "white",
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <LeftOutlined
+              onClick={() => {
+                setIsScanner(false);
+                qrScanner?.stop();
+              }}
+            />
+            <Title
+              level={4}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 auto",
+              }}
+            >
+              {t("title")}
+            </Title>
+            <div style={{ width: "16px" }}></div>
+          </div>
+        )}
+        <video
+          id="qr-video"
+          style={{
+            width: "100vw",
+          }}
+          hidden={false}
+        ></video>
+      </div>
     </div>
   );
 };

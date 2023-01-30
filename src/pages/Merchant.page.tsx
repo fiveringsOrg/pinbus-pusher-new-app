@@ -50,6 +50,10 @@ export const Merchant: FC<{
   React.useEffect(() => {
     setColumns([
       {
+        title: t("id"),
+        dataIndex: "id",
+      },
+      {
         title: t("name"),
         dataIndex: "name",
       },
