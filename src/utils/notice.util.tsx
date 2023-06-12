@@ -1,7 +1,7 @@
 import { Modal, message } from "antd";
 import { t } from "i18next";
 import { CheckOutlined } from "@ant-design/icons";
-
+import { toast } from "react-toastify";
 export const modalSuccess = (title: string, message: string, navigate: any) => {
   Modal.confirm({
     title: title,
@@ -55,4 +55,33 @@ export const messageWarning = (content: string) => {
     type: "warning",
     content: content ? content : t("warning"),
   });
+};
+type ToastType = "success" | "error" | "info";
+
+const notify = (
+  type: ToastType,
+  msg: string,
+  extra: Record<string, any> = {}
+) => {
+  toast[type](msg, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    ...extra,
+  });
+};
+export const ToastTopHelper = {
+  success: (msg: string, extra?: Record<string, any>) => {
+    notify("success", msg, extra);
+  },
+  error: (msg: string, extra?: Record<string, any>) => {
+    notify("error", msg, extra);
+  },
+  info: (msg: string, extra?: Record<string, any>) => {
+    notify("info", msg, extra);
+  },
 };

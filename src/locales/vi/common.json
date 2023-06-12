@@ -2,7 +2,17 @@
   "common": {
     "success": "",
     "error": "",
-    "warning": ""
+    "warning": "",
+    "choice": "Vui lòng chọn"
+  },
+  "system": {
+    "notLogin": "Chưa đăng nhập",
+    "opeResult": "Kết quả thao tác",
+    "authLack": "Chưa đủ quyền hạn",
+    "sysTip": "Hệ thống nhắc nhở",
+    "serverDisable": "Dịch vụ không khả dụng, vui lòng thử lại hoặc liên hệ quản lý ",
+    "attachTooBig": "Kích thước tệp không phù hợp, không thể tải lên",
+    "unknowError": "Đã xảy ra lỗi chưa rõ nguyên nhân"
   },
   "login": {
     "title": "Pusher đăng nhập",

@@ -1,17 +1,20 @@
 import { HOST } from "../app.constants";
+import http from "../utils/axiosInstance";
 
-import axios from "axios";
+const DICTIONARY_API_URL = HOST + "/api/dictionary";
 
-const API_URL = HOST + "/api/dictionary/mobile/getByParentCode";
+export function getDictionaryByCode(code: string) {
+  return http.post(`${DICTIONARY_API_URL}/getByCode`, null, {
+    params: {
+      code: code,
+    },
+  });
+}
 
-export function getByParentCode(parentCode: any) {
-  return axios.post(
-    API_URL,
-    {},
-    {
-      params: {
-        parentCode: parentCode,
-      },
-    }
-  );
+export function getDictionaryByParentCode(code: string) {
+  return http.post(`${DICTIONARY_API_URL}/getByParentCode`, null, {
+    params: {
+      parentCode: code,
+    },
+  });
 }

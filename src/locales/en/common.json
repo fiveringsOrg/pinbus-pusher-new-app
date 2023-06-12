@@ -2,7 +2,17 @@
   "common": {
     "success": "",
     "error": "",
-    "warning": ""
+    "warning": "",
+    "choice": "Please choose"
+  },
+  "system": {
+    "notLogin": "Not login",
+    "opeResult": "Result",
+    "authLack": "No permission",
+    "sysTip": "System reminders",
+    "serverDisable": "Server is not available, please try again or contact admin ",
+    "attachTooBig": "File is too big, unable to upload",
+    "unknowError": "Unknown error"
   },
   "login": {
     "title": "Pusher login",

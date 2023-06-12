@@ -1,18 +1,18 @@
-import axios from "axios";
 import { HOST } from "../app.constants";
+import http from "../utils/axiosInstance";
 
 const API_URL = HOST + "/api/pusher/mobile";
 
 export function queryDeviceCountStatis() {
-  return axios.post(API_URL + `/queryDeviceCountStatis`);
+  return http.post(API_URL + `/queryDeviceCountStatis`);
 }
 
 export function queryLastSevenDaysDailyStatis() {
-  return axios.post(API_URL + `/queryLastSevenDaysDailyStatis`);
+  return http.post(API_URL + `/queryLastSevenDaysDailyStatis`);
 }
 
 export function deployCabinet(deployDto: any, playFlag: any) {
-  return axios.post(API_URL + `/deployCabinet`, deployDto, {
+  return http.post(API_URL + `/deployCabinet`, deployDto, {
     params: {
       playFlag: playFlag,
     },
@@ -20,7 +20,7 @@ export function deployCabinet(deployDto: any, playFlag: any) {
 }
 
 export function deployPowerbank(deviceCode: any, snList: any[]) {
-  return axios.post(
+  return http.post(
     API_URL + `/deployPowerbank`,
     {},
     {
@@ -33,7 +33,7 @@ export function deployPowerbank(deviceCode: any, snList: any[]) {
 }
 
 export function getPowerbankDeployStatus(deviceCode: any) {
-  return axios.post(
+  return http.post(
     API_URL + `/getPowerbankDeployStatus`,
     {},
     {
@@ -45,8 +45,8 @@ export function getPowerbankDeployStatus(deviceCode: any) {
 }
 
 export function recycleCabinet(deviceCode: any, reason: any, playFlag: any) {
-  return axios.post(
-    API_URL + `/recycleCabinet`,
+  return http.post(
+    API_URL + `/recycleCabinetV2`,
     {},
     {
       params: {
@@ -63,7 +63,7 @@ export function recyclePowerbank(
   powerbankId: any,
   slotNumber: any
 ) {
-  return axios.post(
+  return http.post(
     API_URL + `/recyclePowerbank`,
     {},
     {
@@ -77,28 +77,28 @@ export function recyclePowerbank(
 }
 
 export function registerMerchant(merchant: any, merchantImageList: any) {
-  return axios.post(API_URL + `/registerMerchant`, {
+  return http.post(API_URL + `/registerMerchant`, {
     model: merchant,
     merchantImageList: merchantImageList,
   });
 }
 
 export function getBillingRules(merchantId: any) {
-  return axios.post(`${API_URL}/getBillingRules?merchantId=${merchantId}`);
+  return http.post(`${API_URL}/getBillingRules?merchantId=${merchantId}`);
 }
 
 export function saveBillingRules(billingRules: any) {
-  return axios.post(`${API_URL}/saveBillingRules`, {
+  return http.post(`${API_URL}/saveBillingRules`, {
     model: billingRules,
   });
 }
 
 export function queryWorkProduct() {
-  return axios.post(`${API_URL}/queryWorkProduct`);
+  return http.post(`${API_URL}/queryWorkProduct`);
 }
 
 export function updatePassword(oldPassword: any, newPassword: any) {
-  return axios.post(
+  return http.post(
     `${API_URL}/updatePassword`,
     {},
     {

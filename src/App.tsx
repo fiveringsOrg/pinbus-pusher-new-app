@@ -1,19 +1,12 @@
 /* eslint-disable import/no-anonymous-default-export */
-import React, { FC } from "react";
 import { ConfigProvider } from "antd";
-import axios from "axios";
-import { getToken } from "./utils/storage.util";
 import "antd/dist/reset.css";
-import "./App.css";
+import { FC } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 import Router from "./routes";
-
-//Config default for axios
-let token = getToken();
-if (token) {
-  axios.defaults.headers.common["Authorization"] = token;
-}
-axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const App: FC = () => {
   return (
@@ -32,5 +25,6 @@ export default () => (
     }}
   >
     <App />
+    <ToastContainer />
   </ConfigProvider>
 );

@@ -1,35 +1,22 @@
-import React, { FC } from "react";
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  message,
-  Avatar,
-  Card,
-  Skeleton,
-  Divider,
-} from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+  HddOutlined,
+  LogoutOutlined,
+  RightOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Avatar, Button, Divider, Skeleton } from "antd";
+import Meta from "antd/es/card/Meta";
+import axios from "axios";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { checkHeathWorker, getUser, logout } from "../../api/login.api";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../api/login.api";
+import { CustomUserDetail } from "../../models/user.model";
 import {
   cleanToken,
   cleanUser,
   getStorageUser,
-  saveUser,
 } from "../../utils/storage.util";
-import Meta from "antd/es/card/Meta";
-import { CustomUserDetail } from "../../models/user.model";
-import {
-  LogoutOutlined,
-  RightOutlined,
-  ShakeOutlined,
-  HddOutlined,
-} from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export const Operate: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "operate" });
@@ -40,23 +27,6 @@ export const Operate: FC = () => {
   React.useEffect(() => {
     document.title = t("title");
   }, [t]);
-
-  React.useEffect(() => {
-    checkHeathWorker()
-      .then((response) => {
-        if (response && response.data.status === "NORMAL") {
-        } else if (response.status === 401) {
-          cleanUser();
-          cleanToken();
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        cleanUser();
-        cleanToken();
-        navigate("/login");
-      });
-  }, [navigate]);
 
   React.useEffect(() => {
     if (getStorageUser()) {

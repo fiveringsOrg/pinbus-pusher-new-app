@@ -1,6 +1,6 @@
 import { HOST } from "../app.constants";
 
-import axios from "axios";
+import http from "../utils/axiosInstance";
 const API_URL = HOST + "/api/pusher/mobile";
 
 export function pageQuery(
@@ -9,7 +9,7 @@ export function pageQuery(
   forDeploy: any,
   searchWord: any
 ) {
-  return axios.post(API_URL + `/pageQueryMerchant`, null, {
+  return http.post(API_URL + `/pageQueryMerchant`, null, {
     params: {
       pageIndex: pageIndex,
       pageSize: pageSize,
@@ -25,7 +25,7 @@ export function queryForDeploy(
   pNumber: any,
   pSize: any
 ) {
-  return axios.post(
+  return http.post(
     HOST +
       `/api/merchant/mobile/queryMerchantForDeploy?parentId=${parentId}&searchWord=${searchWord}&pNumber=${pNumber}&pSize=${pSize}`,
     null,
