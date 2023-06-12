@@ -1,5 +1,5 @@
 import { Select, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -38,7 +38,6 @@ const SelectDict: React.FC<SelectDictProps> = ({
     if (code && !parentCode) {
       getDictByCode(code);
     }
-
     if (parentCode) {
       getDictByParentCode(parentCode);
     }
@@ -133,4 +132,4 @@ const SelectDict: React.FC<SelectDictProps> = ({
   }
 };
 
-export default SelectDict;
+export default memo(SelectDict);

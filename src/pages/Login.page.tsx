@@ -2,7 +2,6 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Space, Spin } from "antd";
 import Title from "antd/es/typography/Title";
-import axios from "axios";
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -22,17 +21,16 @@ export const Login: FC = () => {
   const [agentCode, setAgentCode] = React.useState(undefined);
   const [isLogin, setIsLogin] = React.useState(false);
   const navigate = useNavigate();
-  const params = useParams();
-  const location = useLocation();
+  const [form] = Form.useForm();
 
   const clearCaches = () => {
-    setUsername("");
     setPassword("");
     setIsLogin(false);
   };
 
   const onLogin = () => {
     setIsLogin(true);
+
     if (username && password) {
       login(username, password, agentCode)
         .then((token: any) => {
@@ -49,6 +47,7 @@ export const Login: FC = () => {
         })
         .catch((e) => {
           messageError(e);
+          form.setFieldValue("password", "");
           clearCaches();
         });
     } else {
@@ -88,85 +87,72 @@ export const Login: FC = () => {
           height: "100vh",
         }}
       >
-        {isLogin ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-            }}
+        <Form
+          name="basic"
+          form={form}
+          className="login-form"
+          labelCol={{ span: 2 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+        >
+          <Form.Item
+            label={t("username").toString()}
+            name={t("username").toString()}
+            rules={[
+              {
+                required: true,
+                message: t("username-message").toString(),
+              },
+            ]}
           >
-            <Space size="middle">
-              <Spin size="large" />
-            </Space>
-          </div>
-        ) : (
-          <Form
-            name="basic"
-            className="login-form"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder={t("username").toString()}
+              size="large"
+              allowClear
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label={t("password").toString()}
+            name={"password"}
+            rules={[
+              {
+                required: true,
+                message: t("password-message").toString(),
+              },
+            ]}
           >
-            <Form.Item
-              label={t("username").toString()}
-              name={t("username").toString()}
-              rules={[
-                {
-                  required: true,
-                  message: t("username-message").toString(),
-                },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder={t("username").toString()}
-                size="large"
-                allowClear
-                onChange={(e) => setUsername(e.target.value)}
-              />
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              allowClear
+              autoComplete="on"
+              placeholder={t("password").toString()}
+              size="large"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>{t("remember-me")}</Checkbox>
             </Form.Item>
-            <Form.Item
-              label={t("password").toString()}
-              name={t("password").toString()}
-              rules={[
-                {
-                  required: true,
-                  message: t("password-message").toString(),
-                },
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                allowClear
-                autoComplete="on"
-                placeholder={t("password").toString()}
-                size="large"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>{t("remember-me")}</Checkbox>
-              </Form.Item>
-            </Form.Item>
+          </Form.Item>
 
-            <Form.Item>
-              <Space direction="vertical" style={{ width: "100%" }}>
-                <Button
-                  type="primary"
-                  block
-                  onClick={() => onLogin()}
-                  htmlType="submit"
-                >
-                  {t("login-button")}
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-        )}
+          <Form.Item>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Button
+                type="primary"
+                loading={isLogin}
+                block
+                onClick={() => onLogin()}
+                htmlType="submit"
+              >
+                {t("login-button")}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );
