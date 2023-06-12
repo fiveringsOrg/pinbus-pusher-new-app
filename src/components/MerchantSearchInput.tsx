@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Divider, Select } from "antd";
 import type { SelectProps } from "antd";
-import { pageQuery, queryForDeploy } from "../api/merchant.api";
-import { getStorageUser } from "../utils/storage.util";
-import { CustomUserDetail } from "../models/user.model";
+import { Select } from "antd";
+import React, { useState } from "react";
+import { queryForDeploy } from "../api/merchant.api";
 const { Option } = Select;
 
 export const MerchantSearchInput: React.FC<{
@@ -19,6 +17,7 @@ export const MerchantSearchInput: React.FC<{
   const handleSearch = (newValue: string) => {
     if (newValue) {
       queryForDeploy(null, null, 1, 10).then((response) => {
+        console.log("response: ", response);
         if (response) {
           setData(response.data.result);
         }

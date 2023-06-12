@@ -1,27 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC } from "react";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  message,
-  Spin,
-  Divider,
-} from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
-import { getUser, login } from "../api/login.api";
-import { saveToken, getToken, saveUser } from "../utils/storage.util";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "axios";
+import { Button, Checkbox, Form, Input, Space, Spin } from "antd";
 import Title from "antd/es/typography/Title";
+import axios from "axios";
+import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getUser, login } from "../api/login.api";
 import {
   messageError,
   messageSuccess,
   messageWarning,
 } from "../utils/notice.util";
+import { saveToken, saveUser } from "../utils/storage.util";
 
 export const Login: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "login" });
@@ -44,28 +35,17 @@ export const Login: FC = () => {
     setIsLogin(true);
     if (username && password) {
       login(username, password, agentCode)
-        .then((response) => {
-          if (response && response.data.status === "NORMAL") {
-            saveToken(response.data.result);
-            messageSuccess(t("success"));
-            axios.defaults.headers.common["Authorization"] =
-              response.data.result;
-            getUser().then((user) => {
-              if (user) {
-                saveUser(JSON.stringify(user.data.result));
-              }
-            });
-            setTimeout(() => {
-              navigate("/operate");
-              clearCaches();
-            }, 1000);
-          } else if (response && response.data.status === "ERROR") {
-            messageError(response.data.message);
-            clearCaches();
-          } else {
-            messageWarning(t("warning"));
-            clearCaches();
-          }
+        .then((token: any) => {
+          saveToken(token);
+          messageSuccess(t("success"));
+          getUser().then((user) => {
+            if (user) {
+              saveUser(JSON.stringify(user));
+            }
+          });
+          setTimeout(() => {
+            navigate("/operate");
+          }, 1000);
         })
         .catch((e) => {
           messageError(e);

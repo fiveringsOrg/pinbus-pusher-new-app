@@ -1,40 +1,23 @@
-import React, { FC, LegacyRef } from "react";
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  message,
-  Spin,
-  Tooltip,
-  Select,
-} from "antd";
-import {
-  QrcodeOutlined,
-  LeftOutlined,
   HddOutlined,
+  LeftOutlined,
+  QrcodeOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
-import QrScanner from "qr-scanner";
+import { Button, Form, Input, Select, Space, Spin, Tooltip } from "antd";
 import Title from "antd/es/typography/Title";
-import {
-  cleanToken,
-  cleanUser,
-  getStorageUser,
-} from "../../utils/storage.util";
+import QrScanner from "qr-scanner";
+import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { MerchantSearchInput } from "../../components/MerchantSearchInput";
 import { deployCabinet } from "../../api/pusher.api";
-import { checkHeathWorker } from "../../api/login.api";
 import {
   messageError,
   messageSuccess,
   messageWarning,
   modalSuccess,
 } from "../../utils/notice.util";
-import { MerchantSearchTable } from "../../components/MerchantSearchTable";
+import { getStorageUser } from "../../utils/storage.util";
 import { DataType, Merchant } from "../Merchant.page";
 
 export const DeployCabinet: FC = () => {
@@ -107,18 +90,11 @@ export const DeployCabinet: FC = () => {
     }
     deployCabinet({ merchantId: merchant.id, deviceCode: cabinet }, playFlag)
       .then((response) => {
-        if (response && response.status === 200) {
-          modalSuccess(t("success"), t("continue-deploy"), navigate);
-        } else if (response && response.data.status === "ERROR") {
-          messageError(t("deploying-error"));
-        } else {
-          messageWarning(t("warning"));
-        }
         cleanCaches();
+        messageSuccess(t("success"));
         setIsLogin(true);
       })
       .catch((err) => {
-        messageError(t("deploying-error"));
         cleanCaches();
         setIsLogin(true);
       });
@@ -134,23 +110,6 @@ export const DeployCabinet: FC = () => {
   React.useEffect(() => {
     document.title = t("title");
   }, [t]);
-
-  React.useEffect(() => {
-    checkHeathWorker()
-      .then((response) => {
-        if (response && response.data.status === "NORMAL") {
-        } else if (response.status === 401) {
-          cleanUser();
-          cleanToken();
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        cleanUser();
-        cleanToken();
-        navigate("/login");
-      });
-  }, [navigate]);
 
   //   React.useEffect(() => {
   //     if (navigator.mediaDevices.getUserMedia !== null) {

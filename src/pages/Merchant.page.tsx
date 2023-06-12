@@ -1,8 +1,6 @@
-import { Modal, Pagination, SelectProps, Table } from "antd";
-import { Input } from "antd";
+import { Input, Modal, Pagination, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import React from "react";
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryForDeploy } from "../api/merchant.api";
 
@@ -71,26 +69,28 @@ export const Merchant: FC<{
   React.useEffect(() => {
     setLoading(true);
     setPageNumber(props.pNumber);
-    queryForDeploy(null, "", props.pNumber, props.pSize).then((response) => {
-      if (response && response.data.result) {
-        setData(
-          response.data.result.map((d: any, index: number) => {
-            return {
-              id: d.id,
-              key: index,
-              name: d.name,
-              address: d.address,
-              longLat: `${d.longitude} \\ ${d.latitude}`,
-              totalRow: d.totalRow,
-            };
-          })
-        );
-        setLoading(false);
-      } else {
-        setData([]);
-        setLoading(false);
+    queryForDeploy(null, "", props.pNumber, props.pSize).then(
+      (response: any) => {
+        if (response) {
+          setData(
+            response?.map((d: any, index: number) => {
+              return {
+                id: d.id,
+                key: index,
+                name: d.name,
+                address: d.address,
+                longLat: `${d.longitude} \\ ${d.latitude}`,
+                totalRow: d.totalRow,
+              };
+            })
+          );
+          setLoading(false);
+        } else {
+          setData([]);
+          setLoading(false);
+        }
       }
-    });
+    );
   }, [props.pNumber, props.pSize]);
 
   const onSelectMerchant = (
@@ -119,10 +119,10 @@ export const Merchant: FC<{
         onSearch={(searchValue: string) => {
           setLoading(true);
           queryForDeploy(null, searchValue, props.pNumber, props.pSize).then(
-            (response) => {
-              if (response && response.data.result) {
+            (response: any) => {
+              if (response) {
                 setData(
-                  response.data.result.map((d: any, index: number) => {
+                  response.map((d: any, index: number) => {
                     return {
                       id: d.id,
                       key: index,
@@ -167,10 +167,10 @@ export const Merchant: FC<{
         onChange={(page, pageSize) => {
           setLoading(true);
           setPageNumber(page);
-          queryForDeploy(null, "", page, props.pSize).then((response) => {
-            if (response && response.data.result) {
+          queryForDeploy(null, "", page, props.pSize).then((response: any) => {
+            if (response) {
               setData(
-                response.data.result.map((d: any, index: number) => {
+                response.map((d: any, index: number) => {
                   return {
                     id: d.id,
                     key: index,
