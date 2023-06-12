@@ -1,5 +1,5 @@
 import { Select, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -38,9 +38,11 @@ const SelectDict: React.FC<SelectDictProps> = ({
     if (code && !parentCode) {
       getDictByCode(code);
     }
+    console.log("vo day 222222222");
 
     if (parentCode) {
       getDictByParentCode(parentCode);
+      console.log("vo day");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,4 +135,4 @@ const SelectDict: React.FC<SelectDictProps> = ({
   }
 };
 
-export default SelectDict;
+export default memo(SelectDict);
