@@ -38,11 +38,8 @@ const SelectDict: React.FC<SelectDictProps> = ({
     if (code && !parentCode) {
       getDictByCode(code);
     }
-    console.log("vo day 222222222");
-
     if (parentCode) {
       getDictByParentCode(parentCode);
-      console.log("vo day");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
