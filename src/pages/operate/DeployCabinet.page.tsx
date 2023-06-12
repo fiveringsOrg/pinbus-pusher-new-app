@@ -11,12 +11,7 @@ import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deployCabinet } from "../../api/pusher.api";
-import {
-  messageError,
-  messageSuccess,
-  messageWarning,
-  modalSuccess,
-} from "../../utils/notice.util";
+import { ToastTopHelper, messageWarning } from "../../utils/notice.util";
 import { getStorageUser } from "../../utils/storage.util";
 import { DataType, Merchant } from "../Merchant.page";
 
@@ -91,7 +86,7 @@ export const DeployCabinet: FC = () => {
     deployCabinet({ merchantId: merchant.id, deviceCode: cabinet }, playFlag)
       .then((response) => {
         cleanCaches();
-        messageSuccess(t("success"));
+        ToastTopHelper.success(t("success"));
         setIsLogin(true);
       })
       .catch((err) => {
