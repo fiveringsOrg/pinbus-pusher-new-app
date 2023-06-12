@@ -1,43 +1,19 @@
-import React, { FC, LegacyRef } from "react";
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  message,
-  Spin,
-  Tooltip,
-  Select,
-} from "antd";
-import {
-  QrcodeOutlined,
-  LeftOutlined,
   HddOutlined,
+  LeftOutlined,
   MobileFilled,
+  QrcodeOutlined,
 } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
-import QrScanner from "qr-scanner";
+import { Button, Form, Input, Select, Space, Spin, Tooltip } from "antd";
 import Title from "antd/es/typography/Title";
-import {
-  cleanToken,
-  cleanUser,
-  getStorageUser,
-} from "../../utils/storage.util";
+import QrScanner from "qr-scanner";
+import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { MerchantSearchInput } from "../../components/MerchantSearchInput";
-import {
-  deployCabinet,
-  recycleCabinet,
-  recyclePowerbank,
-} from "../../api/pusher.api";
-import { checkHeathWorker } from "../../api/login.api";
-import {
-  messageWarning,
-  modalSuccess,
-  messageError,
-} from "../../utils/notice.util";
 import { ejectSlotV2, queryById } from "../../api/cabinet.api";
+import SelectDict from "../../components/Select/SelectDict";
+import { messageWarning, modalSuccess } from "../../utils/notice.util";
+import { getStorageUser } from "../../utils/storage.util";
 
 export const RecyclePowerbank: FC = () => {
   const { t } = useTranslation("common", { keyPrefix: "recycle-powerbank" });
@@ -90,18 +66,10 @@ export const RecyclePowerbank: FC = () => {
 
     ejectSlotV2(Number(cabinet.slice(4)), Number(powerbankSlot), false)
       .then((response) => {
-        if (response && response.status === 200) {
-          modalSuccess(t("success"), t("continue-recycle"), navigate);
-        } else if (response.status === 500) {
-          messageError(t("recycling-error"));
-        } else {
-          messageWarning(t("warning"));
-        }
-        cleanCaches();
+        modalSuccess(t("success"), t("continue-recycle"), navigate);
         setIsLogin(true);
       })
       .catch((err) => {
-        messageError(t("recycling-error"));
         cleanCaches();
         setIsLogin(true);
       });
@@ -121,28 +89,10 @@ export const RecyclePowerbank: FC = () => {
   React.useEffect(() => {
     if (cabinet) {
       queryById(cabinet.slice(4)).then((result: any) => {
-        setCabinetSlotList(result.data.result.cabinetSlotList);
-        console.log(result.data.result.cabinetSlotList);
+        setCabinetSlotList(result.cabinetSlotList);
       });
     }
   }, [cabinet]);
-
-  React.useEffect(() => {
-    checkHeathWorker()
-      .then((response) => {
-        if (response && response.data.status === "NORMAL") {
-        } else if (response.status === 401) {
-          cleanUser();
-          cleanToken();
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        cleanUser();
-        cleanToken();
-        navigate("/login");
-      });
-  }, [navigate]);
 
   const prepareScanQrCode = () => {
     if (videoRef) {
@@ -181,22 +131,20 @@ export const RecyclePowerbank: FC = () => {
               );
               setIsScanner(false);
               setIsValidateCabinet(false);
-
               setPlayFlag(undefined);
               setReason(undefined);
-
               setIsValidateReason(false);
               qrScanner?.stop();
             }
           },
           {
-            /* your options or returnDetailedScanResult: true if you're not specifying any other options */
             highlightScanRegion: true,
           }
         )
       );
     }
-  }, [videoRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoRef, isScanner]);
 
   React.useEffect(() => {
     if (getStorageUser()) {
@@ -287,9 +235,8 @@ export const RecyclePowerbank: FC = () => {
                   <Input
                     disabled={true}
                     size="large"
-                    value={cabinet}
                     defaultValue={cabinet}
-                    allowClear
+                    value={cabinet}
                     onChange={(e) => {
                       if (e.target.value) {
                         setIsValidateReason(false);
@@ -320,13 +267,10 @@ export const RecyclePowerbank: FC = () => {
                     },
                   ]}
                 >
-                  <Select
-                    value={reason}
-                    defaultValue={reason}
+                  <SelectDict
                     disabled={isValidateReason}
-                    allowClear
-                    size="large"
-                    onChange={(value) => {
+                    parentCode="038"
+                    onChange={(value: string | any) => {
                       if (value) {
                         setIsValidateRejectPowerbankSlot(false);
                       } else {
@@ -334,16 +278,6 @@ export const RecyclePowerbank: FC = () => {
                       }
                       setReason(value);
                     }}
-                    options={[
-                      {
-                        value: "03801",
-                        label: t("adjust"),
-                      },
-                      {
-                        value: "03802",
-                        label: t("fault"),
-                      },
-                    ]}
                   />
                 </Form.Item>
 

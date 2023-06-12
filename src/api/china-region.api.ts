@@ -1,6 +1,6 @@
 import { HOST } from "../app.constants";
+import http from "../utils/axiosInstance";
 
-import axios from "axios";
 const API_URL = HOST + "/api/chinaRegion/mobile";
 
 export function getRegionDataByParentCode(parentCode: any) {
@@ -11,7 +11,7 @@ export function getRegionDataByParentCode(parentCode: any) {
     url += parentCode;
   }
   return new Promise((resolve, reject) => {
-    axios.post(url).then(
+    http.post(url).then(
       (data: any) => {
         if (data && data.length > 0) {
           let list = data.map((d: any) => {
@@ -32,5 +32,5 @@ export function getRegionDataByParentCode(parentCode: any) {
 }
 
 export const getProvince = () => {
-  return axios.post(`${API_URL}/getProvince`);
+  return http.post(`${API_URL}/getProvince`);
 };
