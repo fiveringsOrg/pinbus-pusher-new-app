@@ -41,6 +41,9 @@ http.interceptors.response.use(
         if (!data) {
           return null;
         }
+        if (status === "ERROR") {
+          ToastTopHelper.error(message);
+        }
         if (result.status === "SUCCESS") {
           ToastTopHelper.success(result.result);
         }
